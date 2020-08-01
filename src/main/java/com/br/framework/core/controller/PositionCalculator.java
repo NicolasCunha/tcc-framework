@@ -104,21 +104,12 @@ public class PositionCalculator {
             final String name) {
         final Rectangle rectangle = new Rectangle();
         rectangle.setBounds(
-                calcTextFieldXPosition(lastCompX, label, name),
+                (label.getX() * 2) + label.getWidth(),
                 lastCompY,
                 PositionConstants.FIELD_WIDTH,
                 PositionConstants.FIELD_HEIGHT
         );
         return rectangle;
-    }
-
-    private int calcTextFieldXPosition(final int lastCompX,
-            final JLabel label,
-            final String name) {
-        return lastCompX
-                + label.getX()
-                + name.length()
-                + PositionConstants.CALC_FIELD_X_POS;
     }
 
     private int calculateLabelWidth(final JLabel label) {

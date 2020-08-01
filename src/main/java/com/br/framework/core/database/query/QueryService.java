@@ -38,7 +38,7 @@ public abstract class QueryService {
         for (int i = 1; i <= arguments.length; i++) {
             preparedStatement.setObject(i, arguments[i - 1]);
         }
-
+        
         final ResultSet resultSet = preparedStatement.executeQuery();
         connectionPool.close(conn);
         return QueryResultFactory.build(resultSet);
