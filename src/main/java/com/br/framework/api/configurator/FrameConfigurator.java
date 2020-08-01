@@ -25,6 +25,7 @@ public class FrameConfigurator {
         private boolean centered;
         private String table;
         private Map<String, String> attributes = new LinkedHashMap<>();
+        private String sequence;
 
         public String getTitle() {
             return title;
@@ -74,12 +75,20 @@ public class FrameConfigurator {
             this.attributes = attributes;
         }
 
+        public String getSequence() {
+            return sequence;
+        }
+
+        public void setSequence(String sequence) {
+            this.sequence = sequence;
+        }
+
     }
 
     private FrameConfig config;
     private Map<String, String> attributes;
     private final FrameFactory frameFactory = new FrameFactory();
-    private final JFrameFactory jframeFactory = new JFrameFactory();    
+    private final JFrameFactory jframeFactory = new JFrameFactory();
     private final CrudFactory crudFactory = new CrudFactory();
 
     private FrameConfigurator() {
@@ -141,6 +150,12 @@ public class FrameConfigurator {
         return this;
     }
 
+    public FrameConfigurator sequence(final String seqName) {
+        checkDefInstance();
+        config.setSequence(seqName);
+        return this;
+    }
+
     public Frame build() throws SQLException, Exception {
         if (config == null) {
             throw new Exception("Frame configuration is not defined.");
@@ -149,7 +164,7 @@ public class FrameConfigurator {
             QueryService.connectionPool(new ConnectionPool());
         }
         final JFrame swingFrame = jframeFactory.build(config);
-        final Frame frame = frameFactory.build(swingFrame, config);        
+        final Frame frame = frameFactory.build(swingFrame, config);
         crudFactory.createCrud(frame);
         config = null;
         return frame;

@@ -7,8 +7,7 @@ import com.br.framework.core.database.query.QueryResult;
 import com.br.framework.core.database.query.QueryService;
 import com.br.framework.core.enumerator.FrameComponent;
 import com.br.framework.core.factory.swing.TableModelFactory;
-import com.br.framework.core.listener.ButtonListener;
-import com.br.framework.core.listener.TableListener;
+import com.br.framework.core.Handlebar;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,7 +49,7 @@ public class CrudFactory {
     public void createGrid(final Frame frame) throws SQLException {
         final JTable jtable = new JTable();
         final JScrollPane scrollPane = new JScrollPane(jtable);
-        final TableListener tableListener = new TableListener(jtable, frame);
+        final Handlebar handlebar = (Handlebar) FrameController.getComponent(frame, FrameComponent.HANDLEBAR);
         final QueryResult queryResult = QueryService.run(String.valueOf(FrameController.getComponent(frame, FrameComponent.FRAME_QUERY)));
         final DefaultTableModel model = modelFactory.createTableModel(queryResult);
         final Map<String, Integer> columnPosition = modelFactory.getColumnPosition();
@@ -58,12 +57,11 @@ public class CrudFactory {
         jtable.setModel(model);
         scrollPane.setBounds(calculator.calculateScrollPane(frame));
         scrollPane.setViewportView(jtable);
-        tableListener.createListeners();
+        handlebar.createTableListener(jtable);
 
         FrameController.addComponent(frame, FrameComponent.SWING_JSCROLL_GRID, scrollPane);
         FrameController.addComponent(frame, FrameComponent.SWING_JTABLE, jtable);
-        FrameController.addComponent(frame, FrameComponent.MAP_COLUMN_POSITION, columnPosition);
-        FrameController.addComponent(frame, FrameComponent.TABLE_LISTENER, tableListener);
+        FrameController.addComponent(frame, FrameComponent.MAP_COLUMN_POSITION, columnPosition);        
         frame.setSqlResult(queryResult);
 
         FrameController.swingAdd(frame, scrollPane);
@@ -73,7 +71,7 @@ public class CrudFactory {
 
     private void createForm(final Frame frame) {
         final JFrame jframe = (JFrame) FrameController.getComponent(frame, FrameComponent.SWING_JFRAME);
-        final ButtonListener buttonController = (ButtonListener) FrameController.getComponent(frame, FrameComponent.EDIT_GRID_LISTENER);
+        final Handlebar handlebar = (Handlebar) FrameController.getComponent(frame, FrameComponent.HANDLEBAR);
         final JScrollPane scrollPane = new JScrollPane();
         final JPanel editPanel = new JPanel();
         final JButton button = new JButton(ButtonText.BUTTON_EDIT_GRID.desc());
@@ -99,8 +97,8 @@ public class CrudFactory {
             editPanel.add(swingField);
         });
 
-        buttonController.addGridViewButtonController(button, frame);
-        FrameController.addComponent(frame, FrameComponent.BUTTON_GRID_VIEW, button);
+        handlebar.addGridViewButtonController(button);
+        FrameController.addComponent(frame, FrameComponent.BUTTON_GRID_FORM, button);
         FrameController.swingAdd(frame, button);
 
         jframe.repaint();
