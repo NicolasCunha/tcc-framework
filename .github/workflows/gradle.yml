@@ -3,7 +3,7 @@ name: Java - CI - Gradle Build
 on:
   pull_request:
     branches: [ master ]
-
+    tags-ignore: [devops]
 jobs:
   build:
 
