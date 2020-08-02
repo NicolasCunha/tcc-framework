@@ -5,7 +5,7 @@ import com.br.framework.core.component.Frame;
 import com.br.framework.core.controller.FrameController;
 import com.br.framework.core.component.Handlebar;
 import com.br.framework.core.component.Table;
-import com.br.framework.core.dbmetadata.MetadataLoader;
+import com.br.framework.core.database.metadata.MetadataLoader;
 import com.br.framework.core.enumerator.FrameComponent;
 import javax.swing.JFrame;
 

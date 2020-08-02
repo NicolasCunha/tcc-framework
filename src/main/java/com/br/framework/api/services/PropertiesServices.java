@@ -1,8 +1,8 @@
-package com.br.framework.core.system;
+package com.br.framework.api.services;
 
 import com.br.framework.core.enumerator.ConnectionAuth;
 
-public abstract class FrameworkProperties {
+public abstract class PropertiesServices {
 
     public static void set(final String name, final String value) {
         System.setProperty(name, value);
@@ -16,7 +16,7 @@ public abstract class FrameworkProperties {
         return get(name) == null || get(name).isEmpty();
     }
 
-    public static void setDatabaseConnectionValues(
+    public static void setupDatabaseAuth(
             final String url,
             final String user,
             final String password) {

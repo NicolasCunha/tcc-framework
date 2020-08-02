@@ -1,18 +1,20 @@
 package com.br.framework.bootstrap;
 
 import com.br.framework.api.Framework;
-import com.br.framework.core.system.FrameworkProperties;
+import com.br.framework.core.component.Frame;
+import com.br.framework.api.services.LoggingService;
+import com.br.framework.api.services.PropertiesServices;
 
 public class SystemBootstrap {
 
     public static void main(String[] args) throws Exception {
-        FrameworkProperties.setDatabaseConnectionValues(
-                        "jdbc:mariadb://localhost:3306/tcc",
-                        "root",
-                        "root"
-                );
-
-        Framework.getFrameConfigurator()
+        PropertiesServices.setupDatabaseAuth(
+                "jdbc:mariadb://localhost:3306/tcc",
+                "root",
+                "root"
+        );
+        LoggingService.setShouldLogSql(true);
+        final Frame frame = Framework.getFrameConfigurator()
                 .title("Cadastro de Alunos")
                 .width(1024)
                 .height(768)
@@ -30,8 +32,8 @@ public class SystemBootstrap {
                         "idade",
                         "Idade do Aluno"
                 )
-                .build()
-                .show();
+                .build();
+        frame.show();        
     }
 
 }

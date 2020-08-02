@@ -1,12 +1,13 @@
 package com.br.framework.core.database.query;
 
-import com.br.framework.core.system.FrameworkProperties;
+import com.br.framework.core.component.interfaces.Destroyable;
+import com.br.framework.api.services.PropertiesServices;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class QueryResult {
+public class QueryResult implements Destroyable {
 
     private List<Map<String, Object>> rows;
     private List<String> columns;
@@ -148,12 +149,12 @@ public class QueryResult {
     }
 
     private void appendColumnNames(final StringBuilder builder) {
-        builder.append(FrameworkProperties.get("line.separator"));
+        builder.append(PropertiesServices.get("line.separator"));
         toFirstRecord();
         getCurrentRow().keySet().forEach((key) -> {
             builder.append("|".concat(key).concat("|"));
         });
-        builder.append(FrameworkProperties.get("line.separator"));
+        builder.append(PropertiesServices.get("line.separator"));
     }
 
     private void appendColumnValues(final StringBuilder builder) {
@@ -162,8 +163,17 @@ public class QueryResult {
             getCurrentRow().keySet().forEach((key) -> {
                 builder.append("|".concat(getString(key)).concat("|"));
             });
-            builder.append(FrameworkProperties.get("line.separator"));
+            builder.append(PropertiesServices.get("line.separator"));
         }
+    }
+
+    @Override
+    public void destroy() {
+        this.aliasToRow = null;
+        this.columns = null;
+        this.counter = null;
+        this.rows = null;
+        this.table = null;
     }
 
 }
