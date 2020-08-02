@@ -9,11 +9,22 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
-      - name: Setup timestamp value
-        id: timestamp
-        run: |
-          echo "::set-env name=timestamp::$(date +'%Y-%m-%dT%H:%M:%S')"
-          echo "Timestamp: ${{ steps.timestamp.outputs.timestamp}}"
+      - name: Get current time
+        uses: 1466587594/get-current-time@v1
+        id: current-time
+        with:
+          format: YYYYMMDD-HH
+          utcOffset: "+08:00"
+      - name: Use current time
+        env:
+          TIME: "${{ steps.current-time.outputs.time }}"
+          F_TIME: "${{ steps.current-time.outputs.formattedTime }}"
+        run: echo $TIME $F_TIME
+      - name: changelog
+        uses: scottbrenner/generate-changelog-action@master
+        id: Changelog
+        env:
+          REPO: ${{ github.repository }}
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Create Release
@@ -22,10 +33,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: release_tag_${{ steps.timestamp.outputs.timestamp}}
-          release_name: Release ${{ steps.timestamp.outputs.timestamp}}
+          tag_name: release_tag_$F_TIME
+          release_name: Release $F_TIME
           body: |
-            The following commits are present in this release:
-            ${{ github.event.pull_request.commits_url }}
+            ${{ steps.Changelog.outputs.changelog }}
           draft: false
           prerelease: false
