@@ -20,21 +20,21 @@ jobs:
           TIME: "${{ steps.current-time.outputs.time }}"
           F_TIME: "${{ steps.current-time.outputs.formattedTime }}"
         run: echo $TIME $F_TIME
-      - name: changelog
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup changelog
         uses: scottbrenner/generate-changelog-action@master
         id: Changelog
         env:
           REPO: ${{ github.repository }}
-      - name: Checkout code
-        uses: actions/checkout@v2
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: release_tag_$F_TIME
-          release_name: Release $F_TIME
+          tag_name: release_$TIME
+          release_name: Release $TIME
           body: |
             ${{ steps.Changelog.outputs.changelog }}
           draft: false
