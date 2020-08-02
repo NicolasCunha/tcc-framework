@@ -14,8 +14,8 @@ public class SystemBootstrap {
 
         Framework.getFrameConfigurator()
                 .title("Cadastro de Alunos")
-                .width(1280)
-                .height(720)
+                .width(1024)
+                .height(768)
                 .centered(true)
                 .table("aluno")
                 .includeAttribute(

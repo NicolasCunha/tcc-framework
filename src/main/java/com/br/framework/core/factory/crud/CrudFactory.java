@@ -1,13 +1,13 @@
 package com.br.framework.core.factory.crud;
 
-import com.br.framework.core.Frame;
+import com.br.framework.core.component.Frame;
 import com.br.framework.core.controller.FrameController;
 import com.br.framework.core.controller.PositionCalculator;
 import com.br.framework.core.database.query.QueryResult;
 import com.br.framework.core.database.query.QueryService;
 import com.br.framework.core.enumerator.FrameComponent;
 import com.br.framework.core.factory.swing.TableModelFactory;
-import com.br.framework.core.Handlebar;
+import com.br.framework.core.component.Handlebar;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +24,8 @@ public class CrudFactory {
 
     private enum ButtonText {
 
-        BUTTON_EDIT_GRID("Editar/Grid");
+        BUTTON_EDIT_GRID("Editar/Grid"),
+        BUTTON_INSERT("Novo Registro");
 
         private final String desc;
 
@@ -49,59 +50,61 @@ public class CrudFactory {
     public void createGrid(final Frame frame) throws SQLException {
         final JTable jtable = new JTable();
         final JScrollPane scrollPane = new JScrollPane(jtable);
-        final Handlebar handlebar = (Handlebar) FrameController.getComponent(frame, FrameComponent.HANDLEBAR);
-        final QueryResult queryResult = QueryService.run(String.valueOf(FrameController.getComponent(frame, FrameComponent.FRAME_QUERY)));
+        final QueryResult queryResult = QueryService.run(frame.getConfig().getSql());
         final DefaultTableModel model = modelFactory.createTableModel(queryResult);
         final Map<String, Integer> columnPosition = modelFactory.getColumnPosition();
 
         jtable.setModel(model);
         scrollPane.setBounds(calculator.calculateScrollPane(frame));
         scrollPane.setViewportView(jtable);
-        handlebar.createTableListener(jtable);
+        frame.getTable().createTableListener(jtable);
+        frame.getTable().setSqlResult(queryResult);
 
-        FrameController.addComponent(frame, FrameComponent.SWING_JSCROLL_GRID, scrollPane);
-        FrameController.addComponent(frame, FrameComponent.SWING_JTABLE, jtable);
-        FrameController.addComponent(frame, FrameComponent.MAP_COLUMN_POSITION, columnPosition);        
-        frame.setSqlResult(queryResult);
-
-        FrameController.swingAdd(frame, scrollPane);
-        FrameController.swingRepaint(frame);
+        frame.getController().addComponent(FrameComponent.SWING_JSCROLL_GRID, scrollPane);
+        frame.getController().addComponent(FrameComponent.SWING_JTABLE, jtable);
+        frame.getController().addComponent(FrameComponent.MAP_COLUMN_POSITION, columnPosition);
+        frame.getController().swingAdd(scrollPane);
+        frame.getController().swingRepaint();
 
     }
 
     private void createForm(final Frame frame) {
-        final JFrame jframe = (JFrame) FrameController.getComponent(frame, FrameComponent.SWING_JFRAME);
-        final Handlebar handlebar = (Handlebar) FrameController.getComponent(frame, FrameComponent.HANDLEBAR);
+        final JFrame jframe = (JFrame) frame.getController().getComponent(FrameComponent.SWING_JFRAME);
         final JScrollPane scrollPane = new JScrollPane();
         final JPanel editPanel = new JPanel();
-        final JButton button = new JButton(ButtonText.BUTTON_EDIT_GRID.desc());
-        button.setBounds(calculator.calculateGridViewButton(frame));
         editPanel.setLayout(null);
         scrollPane.setBounds(calculator.calculateScrollPane(frame));
         scrollPane.setVisible(false);
         scrollPane.setViewportView(editPanel);
-        
-        FrameController.addComponent(frame, FrameComponent.SWING_EDIT_PANEL, editPanel);
-        FrameController.addComponent(frame, FrameComponent.SWING_JSCROLL_EDIT, scrollPane);
-        FrameController.swingAdd(frame, scrollPane);
-        frame.getSqlResult().getColumns().stream().forEachOrdered((field) -> {            
-            final Map<String, Object> fields = (HashMap<String, Object>) FrameController.getComponent(frame, FrameComponent.MAP_EDIT_FIELDS);
+        createButtons(frame);
+        frame.getController().addComponent(FrameComponent.SWING_EDIT_PANEL, editPanel);
+        frame.getController().addComponent(FrameComponent.SWING_JSCROLL_EDIT, scrollPane);
+        frame.getController().swingAdd(scrollPane);
+        final Map<String, Object> fields = (HashMap<String, Object>) frame.getController().getComponent(FrameComponent.MAP_EDIT_FIELDS);
+        frame.getTable().getSqlResult().getColumns().stream().forEachOrdered((field) -> {
             final JLabel label = createJLabel(frame, field);
             final JTextField swingField = new JTextField();
-
             swingField.setBounds(calculator.calculateFieldBounds(lastComponentX, lastComponentY, label, field));
-            swingField.setText(String.valueOf(FrameController.getValue(frame, field)));
+            swingField.setText(String.valueOf(frame.getTable().getValue(field)));
             fields.put(field, swingField);
-            FrameController.addComponent(frame, FrameComponent.MAP_EDIT_FIELDS, fields);
+            frame.getController().addComponent(FrameComponent.MAP_EDIT_FIELDS, fields);
             editPanel.add(label);
             editPanel.add(swingField);
         });
-
-        handlebar.addGridViewButtonController(button);
-        FrameController.addComponent(frame, FrameComponent.BUTTON_GRID_FORM, button);
-        FrameController.swingAdd(frame, button);
-
         jframe.repaint();
+    }
+
+    private void createButtons(final Frame frame) {
+        final Handlebar handlebar = frame.getHandlebar();
+        JButton button = new JButton(ButtonText.BUTTON_EDIT_GRID.desc());
+        button.setBounds(calculator.calculateGridViewButton(frame));
+        handlebar.addGridViewButtonController(button);
+        handlebar.setGridEditButton(button);
+        frame.getController().swingAdd(button);
+        button = new JButton(ButtonText.BUTTON_INSERT.desc());
+        button.setBounds(calculator.calculateGridViewButton(frame));
+        handlebar.addGridViewButtonController(button);
+        frame.getController().swingAdd(button);
     }
 
     private int lastComponentY = 0;
@@ -123,7 +126,7 @@ public class CrudFactory {
     }
 
     private String getLabelText(final Frame frame, final String field) {
-        return frame.getSqlResult().getAliasToRow().get(field).concat(":");
+        return frame.getTable().getSqlResult().getAliasToRow().get(field).concat(":");
     }
 
 }
