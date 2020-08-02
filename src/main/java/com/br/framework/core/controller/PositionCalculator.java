@@ -1,7 +1,7 @@
 package com.br.framework.core.controller;
 
 import com.br.framework.api.configurator.FrameConfigurator.FrameConfig;
-import com.br.framework.core.Frame;
+import com.br.framework.core.component.Frame;
 import com.br.framework.core.enumerator.FrameComponent;
 import java.awt.Rectangle;
 import javax.swing.JFrame;
@@ -18,7 +18,7 @@ public class PositionCalculator {
         public static final int GRID_TABLE_Y_POSITION = 50;
 
         public static final int COMMON_X_POS = 200;
-        public static final int INITIAL_Y_POS = 200;
+        public static final int INITIAL_Y_POS = 50;
         public static final int CALC_INC_Y_POS = 60;
         public static final int BUTTON_WIDTH = 150;
         public static final int BUTTON_HEIGHT = 30;
@@ -53,12 +53,12 @@ public class PositionCalculator {
     }
 
     private int calculateScrollPaneHeight(final Frame frame) {
-        final JFrame jframe = (JFrame) FrameController.getComponent(frame, FrameComponent.SWING_JFRAME);
+        final JFrame jframe = (JFrame) frame.getController().getComponent(FrameComponent.SWING_JFRAME);
         return jframe.getHeight() - 125;
     }
 
     private int calculateScrollPaneWidth(final Frame frame) {
-        final JFrame jframe = (JFrame) FrameController.getComponent(frame, FrameComponent.SWING_JFRAME);
+        final JFrame jframe = (JFrame) frame.getController().getComponent(FrameComponent.SWING_JFRAME);
         return jframe.getWidth() / 3 * 2;
     }
 
@@ -75,8 +75,7 @@ public class PositionCalculator {
     }
 
     private int commonXPos(final Frame frame) {
-        final FrameConfig config = (FrameConfig) FrameController.getComponent(frame, FrameComponent.FRAME_CONFIG);
-        return config.getWidth() - PositionConstants.COMMON_X_POS;
+        return frame.getConfig().getWidth() - PositionConstants.COMMON_X_POS;
     }
 
     private void checkIncreaseButtonY() {
@@ -117,12 +116,12 @@ public class PositionCalculator {
     }
 
     public int calculateLastXPosition(final Frame frame) {
-        final JScrollPane scrollEdit = (JScrollPane) FrameController.getComponent(frame, FrameComponent.SWING_JSCROLL_EDIT);
+        final JScrollPane scrollEdit = (JScrollPane) frame.getController().getComponent(FrameComponent.SWING_JSCROLL_EDIT);
         return scrollEdit.getX() - PositionConstants.CALC_LABEL_X_POS;
     }
 
     public int calculateLastYPosition(final Frame frame) {
-        final JScrollPane scrollEdit = (JScrollPane) FrameController.getComponent(frame, FrameComponent.SWING_JSCROLL_EDIT);
+        final JScrollPane scrollEdit = (JScrollPane) frame.getController().getComponent(FrameComponent.SWING_JSCROLL_EDIT);
         return scrollEdit.getY() - PositionConstants.CALC_LABEL_Y_POS;
     }
 

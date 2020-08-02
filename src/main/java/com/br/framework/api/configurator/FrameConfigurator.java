@@ -1,6 +1,6 @@
 package com.br.framework.api.configurator;
 
-import com.br.framework.core.Frame;
+import com.br.framework.core.component.Frame;
 import com.br.framework.core.database.connection.ConnectionPool;
 import com.br.framework.core.database.query.QueryService;
 import com.br.framework.core.factory.FrameFactory;
@@ -26,6 +26,15 @@ public class FrameConfigurator {
         private String table;
         private Map<String, String> attributes = new LinkedHashMap<>();
         private String sequence;
+        private String sql;
+
+        public String getSql() {
+            return sql;
+        }
+
+        public void setSql(String sql) {
+            this.sql = sql;
+        }
 
         public String getTitle() {
             return title;
@@ -159,6 +168,9 @@ public class FrameConfigurator {
     public Frame build() throws SQLException, Exception {
         if (config == null) {
             throw new Exception("Frame configuration is not defined.");
+        }
+        if (config.getHeight() * config.getWidth() < (800 * 600)) {
+            throw new Exception("Minimum resolution of 800x600 is required.");
         }
         if (!QueryService.isPoolDefined()) {
             QueryService.connectionPool(new ConnectionPool());
