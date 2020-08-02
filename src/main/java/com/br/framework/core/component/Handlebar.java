@@ -1,8 +1,7 @@
 package com.br.framework.core.component;
 
-import com.br.framework.core.controller.FrameController;
+import com.br.framework.core.component.interfaces.Destroyable;
 import com.br.framework.core.enumerator.FrameComponent;
-import com.br.framework.core.factory.swing.TableModelFactory;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,9 +10,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-public class Handlebar {
+public class Handlebar implements Destroyable {
 
-    private final Frame frame;
+    private Frame frame;
     private JButton gridEditButton;
     private JButton insertButton;
     private JButton removeButton;
@@ -68,13 +67,29 @@ public class Handlebar {
         this.exitCloseButton = exitCloseButton;
     }
 
-    public void addGridViewButtonController(final JButton button) {
+    public void setupGridFormBehavior(final JButton button) {
         button.addActionListener((final ActionEvent e) -> {
             defaultGridViewBehavior();
         });
     }
 
-    public void defaultGridViewBehavior() {
+    public void setupInsertBehavior(final JButton button) {
+
+    }
+
+    public void setupDeleteBehavior(final JButton button) {
+
+    }
+
+    public void setupSaveBehavior(final JButton button) {
+
+    }
+
+    public void setupCloseExitBehavior(final JButton button) {
+
+    }
+
+    private void defaultGridViewBehavior() {
         final JScrollPane scrollEdit = (JScrollPane) frame.getController().getComponent(FrameComponent.SWING_JSCROLL_EDIT);
         if (scrollEdit.isVisible()) {
             toGrid();
@@ -111,6 +126,16 @@ public class Handlebar {
                 field.setText(String.valueOf(frame.getTable().getValue(iterator)));
             });
         }
+    }
+
+    @Override
+    public void destroy() {
+        this.frame = null;
+        this.exitCloseButton = null;
+        this.gridEditButton = null;
+        this.insertButton = null;
+        this.removeButton = null;
+        this.saveButton = null;
     }
 
 }

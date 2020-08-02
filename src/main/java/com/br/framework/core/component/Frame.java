@@ -1,21 +1,22 @@
 package com.br.framework.core.component;
 
 import com.br.framework.api.configurator.FrameConfigurator.FrameConfig;
+import com.br.framework.core.component.interfaces.Destroyable;
 import com.br.framework.core.controller.FrameController;
-import com.br.framework.core.dbmetadata.TableMetadata;
+import com.br.framework.core.database.metadata.TableMetadata;
 import com.br.framework.core.enumerator.FrameComponent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JFrame;
 
-public class Frame {
+public class Frame implements Destroyable {
 
-    private final FrameConfig config;
+    private FrameConfig config;
     private Handlebar handlebar;
     private Table table;
     private TableMetadata metadata;
-    private final Map<FrameComponent, Object> componentMap;
+    private Map<FrameComponent, Object> componentMap;
     private FrameController controller;
 
     private Frame(final FrameConfig config) {
@@ -86,6 +87,23 @@ public class Frame {
 
     public void refresh() {
         table.refresh();
+    }
+
+    public void close() {
+        final JFrame frame = (JFrame) controller.getComponent(FrameComponent.SWING_JFRAME);
+        frame.dispose();
+        frame.setVisible(false);
+        this.destroy();
+    }
+
+    @Override
+    public void destroy() {
+        this.table.destroy();
+        this.handlebar.destroy();
+        this.config = null;
+        this.componentMap = null;
+        this.controller = null;
+        this.metadata = null;
     }
 
 }

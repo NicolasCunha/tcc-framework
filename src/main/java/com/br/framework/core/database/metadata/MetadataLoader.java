@@ -1,7 +1,7 @@
-package com.br.framework.core.dbmetadata;
+package com.br.framework.core.database.metadata;
 
 import com.br.framework.core.database.query.QueryResult;
-import com.br.framework.core.database.query.QueryService;
+import com.br.framework.api.services.QueryService;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;

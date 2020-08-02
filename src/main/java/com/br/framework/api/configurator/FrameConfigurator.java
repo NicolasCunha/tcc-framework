@@ -2,7 +2,7 @@ package com.br.framework.api.configurator;
 
 import com.br.framework.core.component.Frame;
 import com.br.framework.core.database.connection.ConnectionPool;
-import com.br.framework.core.database.query.QueryService;
+import com.br.framework.api.services.QueryService;
 import com.br.framework.core.factory.FrameFactory;
 import com.br.framework.core.factory.crud.CrudFactory;
 import com.br.framework.core.factory.swing.JFrameFactory;

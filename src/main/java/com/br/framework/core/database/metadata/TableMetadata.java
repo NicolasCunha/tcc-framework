@@ -1,4 +1,4 @@
-package com.br.framework.core.dbmetadata;
+package com.br.framework.core.database.metadata;
 
 import java.util.ArrayList;
 import java.util.List;

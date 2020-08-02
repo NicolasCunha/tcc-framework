@@ -1,8 +1,8 @@
 package com.br.framework.core.component;
 
-import com.br.framework.core.controller.FrameController;
+import com.br.framework.core.component.interfaces.Destroyable;
 import com.br.framework.core.database.query.QueryResult;
-import com.br.framework.core.database.query.QueryService;
+import com.br.framework.api.services.QueryService;
 import com.br.framework.core.enumerator.FrameComponent;
 import com.br.framework.core.factory.swing.TableModelFactory;
 import java.awt.event.KeyEvent;
@@ -14,15 +14,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.DefaultTableModel;
 
-public class Table {
+public class Table implements Destroyable {
 
-    private final Frame frame;
-    private final TableModelFactory modelFactory;
+    private Frame frame;
+    private TableModelFactory modelFactory;
     private QueryResult sqlResult;
     private JTable jtable;
 
@@ -128,6 +127,14 @@ public class Table {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public void destroy() {
+        this.sqlResult.destroy();
+        this.jtable = null;
+        this.modelFactory = null;
+        this.frame = null;
     }
 
 }

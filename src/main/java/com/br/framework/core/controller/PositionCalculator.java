@@ -1,6 +1,5 @@
 package com.br.framework.core.controller;
 
-import com.br.framework.api.configurator.FrameConfigurator.FrameConfig;
 import com.br.framework.core.component.Frame;
 import com.br.framework.core.enumerator.FrameComponent;
 import java.awt.Rectangle;

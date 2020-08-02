@@ -1,7 +1,7 @@
 package com.br.framework.core.database.connection;
 
 import com.br.framework.core.enumerator.ConnectionAuth;
-import com.br.framework.core.system.FrameworkProperties;
+import com.br.framework.api.services.PropertiesServices;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -12,10 +12,9 @@ public class ConnectionPool implements IConnectionPool {
     private final Stack<Connection> connectionStack = new Stack<>();
 
     private Connection newConnection() throws SQLException {
-        return DriverManager.getConnection(
-                FrameworkProperties.get(ConnectionAuth.URL.content()),
-                FrameworkProperties.get(ConnectionAuth.USER.content()),
-                FrameworkProperties.get(ConnectionAuth.PASSWORD.content())
+        return DriverManager.getConnection(PropertiesServices.get(ConnectionAuth.URL.content()),
+                PropertiesServices.get(ConnectionAuth.USER.content()),
+                PropertiesServices.get(ConnectionAuth.PASSWORD.content())
         );
     }
 

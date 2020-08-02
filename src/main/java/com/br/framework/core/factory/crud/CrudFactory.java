@@ -4,7 +4,7 @@ import com.br.framework.core.component.Frame;
 import com.br.framework.core.controller.FrameController;
 import com.br.framework.core.controller.PositionCalculator;
 import com.br.framework.core.database.query.QueryResult;
-import com.br.framework.core.database.query.QueryService;
+import com.br.framework.api.services.QueryService;
 import com.br.framework.core.enumerator.FrameComponent;
 import com.br.framework.core.factory.swing.TableModelFactory;
 import com.br.framework.core.component.Handlebar;
@@ -41,6 +41,12 @@ public class CrudFactory {
 
     private final TableModelFactory modelFactory = new TableModelFactory();
     private final PositionCalculator calculator = new PositionCalculator();
+
+    /**
+     * Used in the components position calculations.
+     */
+    private int lastComponentY = 0;
+    private int lastComponentX = 0;
 
     public void createCrud(final Frame frame) throws SQLException {
         createGrid(frame);
@@ -98,17 +104,13 @@ public class CrudFactory {
         final Handlebar handlebar = frame.getHandlebar();
         JButton button = new JButton(ButtonText.BUTTON_EDIT_GRID.desc());
         button.setBounds(calculator.calculateGridViewButton(frame));
-        handlebar.addGridViewButtonController(button);
+        handlebar.setupGridFormBehavior(button);
         handlebar.setGridEditButton(button);
         frame.getController().swingAdd(button);
         button = new JButton(ButtonText.BUTTON_INSERT.desc());
         button.setBounds(calculator.calculateGridViewButton(frame));
-        handlebar.addGridViewButtonController(button);
         frame.getController().swingAdd(button);
     }
-
-    private int lastComponentY = 0;
-    private int lastComponentX = 0;
 
     private JLabel createJLabel(final Frame frame, final String name) {
         if (lastComponentX == 0) {
