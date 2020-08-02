@@ -9,6 +9,11 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
+      - name: Setup timestamp value
+        id: timestamp
+        run: |
+          echo "::set-env name=timestamp::$(date +'%Y-%m-%dT%H:%M:%S')"
+          echo "Timestamp: ${{ steps.timestamp.outputs.timestamp}}"
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Create Release
@@ -17,11 +22,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: release_tag_${{ steps.timestamp.outputs.timestamp}}
+          release_name: Release ${{ steps.timestamp.outputs.timestamp}}
           body: |
-            Changes in this Release
-            - First Change
-            - Second Change
+            The following commits are present in this release:
+            ${{ github.event.pull_request.commits_url }}
           draft: false
           prerelease: false
