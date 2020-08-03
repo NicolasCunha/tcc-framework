@@ -5,4 +5,4 @@ O projeto possui o objetivo de desenvolver um *wrapper* da biblioteca Swing, per
 
 Um arquivo de teste e exemplo de utilização pode ser encontrado [aqui](https://github.com/NicolasCunha/tcc-framework/blob/master/src/main/java/com/br/framework/bootstrap/SystemBootstrap.java).
 
-A documentação de requisitos e diagramas em formato WORD pode encontrado [aqui](https://docs.google.com/document/d/1Ffr843bFp14zad4FAFdrAW-ES415hAAsvJrjnCPD1TA/edit?usp=sharing)
+A documentação de requisitos e diagramas em formato WORD pode encontrado [aqui](https://docs.google.com/document/d/1Ffr843bFp14zad4FAFdrAW-ES415hAAsvJrjnCPD1TA/edit?usp=sharing).
