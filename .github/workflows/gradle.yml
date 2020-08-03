@@ -5,7 +5,7 @@ on:
     branches: [ master ]
 jobs:
   build:
-    if: contains( toJson(github), 'devops' ) == false
+    if: contains( toJson(github), 'devops' ) == false && contains( toJson(github), 'documentation') == false && contains( toJson(github), 'docs') == false
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
