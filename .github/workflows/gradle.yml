@@ -3,12 +3,10 @@ name: Java - CI - Gradle Build
 on:
   pull_request:
     branches: [ master ]
-    tags-ignore: [devops]
 jobs:
   build:
-
+    if: contains( toJson(github), 'devops' ) == false
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 1.8
