@@ -1,4 +1,4 @@
-package com.br.framework.core.factory.crud;
+package com.br.framework.core.factory.component;
 
 import com.br.framework.core.component.Frame;
 import com.br.framework.core.controller.FrameController;
@@ -8,6 +8,7 @@ import com.br.framework.api.services.QueryService;
 import com.br.framework.core.enumerator.FrameComponent;
 import com.br.framework.core.factory.swing.TableModelFactory;
 import com.br.framework.core.component.Handlebar;
+import com.br.framework.core.factory.component.HandlebarFactory;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,25 +23,9 @@ import javax.swing.table.DefaultTableModel;
 
 public class CrudFactory {
 
-    private enum ButtonText {
-
-        BUTTON_EDIT_GRID("Editar/Grid"),
-        BUTTON_INSERT("Novo Registro");
-
-        private final String desc;
-
-        private ButtonText(final String str) {
-            this.desc = str;
-        }
-
-        public String desc() {
-            return this.desc;
-        }
-
-    }
-
-    private final TableModelFactory modelFactory = new TableModelFactory();
-    private final PositionCalculator calculator = new PositionCalculator();
+    private final TableModelFactory modelFactory = TableModelFactory.newInstance();
+    private final PositionCalculator calculator = PositionCalculator.newInstance();
+    private final HandlebarFactory handlebarFactory = HandlebarFactory.newInstance();
 
     /**
      * Used in the components position calculations.
@@ -51,6 +36,7 @@ public class CrudFactory {
     public void createCrud(final Frame frame) throws SQLException {
         createGrid(frame);
         createForm(frame);
+        handlebarFactory.build(frame);
     }
 
     public void createGrid(final Frame frame) throws SQLException {
@@ -82,7 +68,6 @@ public class CrudFactory {
         scrollPane.setBounds(calculator.calculateScrollPane(frame));
         scrollPane.setVisible(false);
         scrollPane.setViewportView(editPanel);
-        createButtons(frame);
         frame.getController().addComponent(FrameComponent.SWING_EDIT_PANEL, editPanel);
         frame.getController().addComponent(FrameComponent.SWING_JSCROLL_EDIT, scrollPane);
         frame.getController().swingAdd(scrollPane);
@@ -98,18 +83,6 @@ public class CrudFactory {
             editPanel.add(swingField);
         });
         jframe.repaint();
-    }
-
-    private void createButtons(final Frame frame) {
-        final Handlebar handlebar = frame.getHandlebar();
-        JButton button = new JButton(ButtonText.BUTTON_EDIT_GRID.desc());
-        button.setBounds(calculator.calculateGridViewButton(frame));
-        handlebar.setupGridFormBehavior(button);
-        handlebar.setGridEditButton(button);
-        frame.getController().swingAdd(button);
-        button = new JButton(ButtonText.BUTTON_INSERT.desc());
-        button.setBounds(calculator.calculateGridViewButton(frame));
-        frame.getController().swingAdd(button);
     }
 
     private JLabel createJLabel(final Frame frame, final String name) {

@@ -27,7 +27,7 @@ public class Table implements Destroyable {
 
     private Table(final Frame frame) {
         this.frame = frame;
-        this.modelFactory = new TableModelFactory();
+        this.modelFactory = TableModelFactory.newInstance();
     }
 
     public QueryResult getSqlResult() {

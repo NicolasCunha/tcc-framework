@@ -40,6 +40,14 @@ public class PositionCalculator {
 
     }
 
+    private PositionCalculator() {
+
+    }
+
+    public static PositionCalculator newInstance() {
+        return new PositionCalculator();
+    }
+
     public Rectangle calculateScrollPane(final Frame frame) {
         final Rectangle rectangle = new Rectangle();
         rectangle.setBounds(
@@ -61,7 +69,7 @@ public class PositionCalculator {
         return jframe.getWidth() / 3 * 2;
     }
 
-    public Rectangle calculateGridViewButton(final Frame frame) {
+    public Rectangle calculateButtonBounds(final Frame frame) {
         checkIncreaseButtonY();
         final Rectangle rectangle = new Rectangle();
         rectangle.setBounds(

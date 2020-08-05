@@ -1,4 +1,4 @@
-package com.br.framework.core.factory;
+package com.br.framework.core.factory.component;
 
 import com.br.framework.api.configurator.FrameConfigurator.FrameConfig;
 import com.br.framework.core.component.Frame;
