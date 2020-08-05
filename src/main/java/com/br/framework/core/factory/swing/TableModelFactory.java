@@ -10,6 +10,14 @@ public class TableModelFactory {
 
     private static Map<String, Integer> columnPosition;
 
+    private TableModelFactory() {
+
+    }
+
+    public static TableModelFactory newInstance() {
+        return new TableModelFactory();
+    }
+
     public DefaultTableModel createTableModel(final QueryResult result) {
         final DefaultTableModel model = new DefaultTableModel();
         if (!result.isEmpty()) {

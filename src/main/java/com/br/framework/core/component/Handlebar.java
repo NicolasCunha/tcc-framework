@@ -69,27 +69,35 @@ public class Handlebar implements Destroyable {
 
     public void setupGridFormBehavior(final JButton button) {
         button.addActionListener((final ActionEvent e) -> {
-            defaultGridViewBehavior();
+            gridForm();
         });
     }
 
     public void setupInsertBehavior(final JButton button) {
-
+        button.addActionListener((final ActionEvent e) -> {
+            insert();
+        });
     }
 
-    public void setupDeleteBehavior(final JButton button) {
-
+    public void setupRemoveBehavior(final JButton button) {
+        button.addActionListener((final ActionEvent e) -> {
+            delete();
+        });
     }
 
     public void setupSaveBehavior(final JButton button) {
-
+        button.addActionListener((final ActionEvent e) -> {
+            save();
+        });
     }
 
     public void setupCloseExitBehavior(final JButton button) {
-
+        button.addActionListener((final ActionEvent e) -> {
+            closeExit();
+        });
     }
 
-    private void defaultGridViewBehavior() {
+    private void gridForm() {
         final JScrollPane scrollEdit = (JScrollPane) frame.getController().getComponent(FrameComponent.SWING_JSCROLL_EDIT);
         if (scrollEdit.isVisible()) {
             toGrid();
@@ -111,10 +119,10 @@ public class Handlebar implements Destroyable {
         final JScrollPane scrollGrid = (JScrollPane) frame.getController().getComponent(FrameComponent.SWING_JSCROLL_GRID);
         scrollEdit.setVisible(true);
         scrollGrid.setVisible(false);
-        updateEditFields();
+        updateFormFields();
     }
 
-    private void updateEditFields() {
+    private void updateFormFields() {
         final JTable refTable = (JTable) frame.getController().getComponent(FrameComponent.SWING_JTABLE);
         final Map<String, Object> fields = (HashMap<String, Object>) frame.getController().getComponent(FrameComponent.MAP_EDIT_FIELDS);
         if (refTable.getSelectedRow() == -1) {
@@ -126,6 +134,23 @@ public class Handlebar implements Destroyable {
                 field.setText(String.valueOf(frame.getTable().getValue(iterator)));
             });
         }
+    }
+
+    private void insert() {
+        toForm();
+        getSaveButton().setEnabled(true);
+    }
+
+    private void delete() {
+
+    }
+
+    private void save() {
+        getSaveButton().setEnabled(false);
+    }
+
+    private void closeExit() {
+        System.exit(0);
     }
 
     @Override
