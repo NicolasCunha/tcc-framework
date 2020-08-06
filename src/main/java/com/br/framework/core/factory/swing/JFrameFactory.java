@@ -5,14 +5,24 @@ import javax.swing.JFrame;
 
 public class JFrameFactory {
 
-    public JFrame build(final FrameConfig config) {
+    private final FrameConfig config;
+
+    private JFrameFactory(final FrameConfig config) {
+        this.config = config;
+    }
+
+    public static JFrameFactory getInstance(final FrameConfig config) {
+        return new JFrameFactory(config);
+    }
+
+    public JFrame build() {
         final JFrame frame = new JFrame();
-        
+
         setDimension(frame,
                 config.getWidth(),
                 config.getHeight()
         );
-        
+
         setCentered(frame, config.isCentered());
 
         frame.setTitle(config.getTitle());

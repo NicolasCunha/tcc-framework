@@ -15,7 +15,7 @@ public class FrameController {
         this.frame = frame;
     }
 
-    public static FrameController newInstance(final Frame frame) {
+    public static FrameController getInstance(final Frame frame) {
         return new FrameController(frame);
     }
 
@@ -40,11 +40,19 @@ public class FrameController {
         return frame.getComponentMap().get(id);
     }
 
-    public void addAttribAlias(final String attrib, final String alias) {
+    private Map<String, Object> getAttributeAliases() {
         if (frame.getComponentMap().get(FrameComponent.MAP_ATRIB_TO_ALIAS) == null) {
             frame.getComponentMap().put(FrameComponent.MAP_ATRIB_TO_ALIAS, new HashMap<String, Object>());
         }
-        ((Map<String, Object>) frame.getComponentMap().get(FrameComponent.MAP_ATRIB_TO_ALIAS)).put(attrib, alias);
+        return ((Map<String, Object>) frame.getComponentMap().get(FrameComponent.MAP_ATRIB_TO_ALIAS));
+    }
+
+    public void addAttribAlias(final String attrib, final String alias) {
+        getAttributeAliases().put(attrib, alias);
+    }
+
+    public boolean attribHasAlias(final String attrib) {
+        return getAttributeAliases().containsKey(attrib);
     }
 
 }

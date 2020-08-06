@@ -24,7 +24,7 @@ public class Frame implements Destroyable {
         this.config = config;
     }
 
-    public static Frame newInstance(final FrameConfig config) {
+    public static Frame getInstance(final FrameConfig config) {
         return new Frame(config);
     }
 

@@ -9,7 +9,7 @@ public class JButtonFactory {
         
     }
     
-    public static JButtonFactory newInstance() {
+    public static JButtonFactory getInstance() {
         return new JButtonFactory();
     }
     

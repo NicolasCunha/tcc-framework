@@ -44,7 +44,7 @@ public class PositionCalculator {
 
     }
 
-    public static PositionCalculator newInstance() {
+    public static PositionCalculator getInstance() {
         return new PositionCalculator();
     }
 

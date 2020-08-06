@@ -28,11 +28,23 @@ public class FrameFactory {
         }
     }
     
-    public Frame build(final JFrame jframe, final FrameConfig config) {
-        final Frame frame = Frame.newInstance(config);
-        final Handlebar handlebar = Handlebar.newInstance(frame);
-        final Table table = Table.newInstance(frame);
-        final FrameController controller = FrameController.newInstance(frame);
+    private final JFrame jframe;
+    private final FrameConfig config;
+    
+    private FrameFactory(final JFrame frame, final FrameConfig config){
+        this.jframe = frame;
+        this.config = config;
+    }
+    
+    public static FrameFactory getInstance(final JFrame frame, final FrameConfig config){
+        return new FrameFactory(frame, config);
+    }
+    
+    public Frame build() {
+        final Frame frame = Frame.getInstance(config);
+        final Handlebar handlebar = Handlebar.getInstance(frame);
+        final Table table = Table.getInstance(frame);
+        final FrameController controller = FrameController.getInstance(frame);
         frame.setController(controller);
         frame.setHandlebar(handlebar);
         frame.setMetadata(MetadataLoader.load(config.getTable()));
