@@ -17,6 +17,7 @@ public class FrameTest {
         public static final String FRAME_TABLE = "aluno";
         public static final Integer FRAME_WIDTH = 1280;
         public static final Integer FRAME_HEIGHT = 720;
+
     }
 
     private static Frame frame;
