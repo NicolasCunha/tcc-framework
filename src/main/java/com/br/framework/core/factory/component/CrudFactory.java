@@ -1,18 +1,14 @@
 package com.br.framework.core.factory.component;
 
 import com.br.framework.core.component.Frame;
-import com.br.framework.core.controller.FrameController;
 import com.br.framework.core.controller.PositionCalculator;
 import com.br.framework.core.database.query.QueryResult;
 import com.br.framework.api.services.QueryService;
 import com.br.framework.core.enumerator.FrameComponent;
 import com.br.framework.core.factory.swing.TableModelFactory;
-import com.br.framework.core.component.Handlebar;
-import com.br.framework.core.factory.component.HandlebarFactory;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -23,9 +19,9 @@ import javax.swing.table.DefaultTableModel;
 
 public class CrudFactory {
 
-    private final TableModelFactory modelFactory = TableModelFactory.newInstance();
-    private final PositionCalculator calculator = PositionCalculator.newInstance();
-    private final HandlebarFactory handlebarFactory = HandlebarFactory.newInstance();
+    private final TableModelFactory modelFactory;
+    private final PositionCalculator calculator = PositionCalculator.getInstance();
+    private final HandlebarFactory handlebarFactory = HandlebarFactory.getInstance();
 
     /**
      * Used in the components position calculations.
@@ -33,13 +29,24 @@ public class CrudFactory {
     private int lastComponentY = 0;
     private int lastComponentX = 0;
 
-    public void createCrud(final Frame frame) throws SQLException {
-        createGrid(frame);
-        createForm(frame);
+    private final Frame frame;
+
+    private CrudFactory(final Frame frame) {
+        this.frame = frame;
+        this.modelFactory = TableModelFactory.getInstance(frame);
+    }
+    
+    public static CrudFactory getInstance(final Frame frame){
+        return new CrudFactory(frame);
+    }
+
+    public void createCrud() throws SQLException {
+        createGrid();
+        createForm();
         handlebarFactory.build(frame);
     }
 
-    public void createGrid(final Frame frame) throws SQLException {
+    public void createGrid() throws SQLException {
         final JTable jtable = new JTable();
         final JScrollPane scrollPane = new JScrollPane(jtable);
         final QueryResult queryResult = QueryService.run(frame.getConfig().getSql());
@@ -60,7 +67,7 @@ public class CrudFactory {
 
     }
 
-    private void createForm(final Frame frame) {
+    private void createForm() {
         final JFrame jframe = (JFrame) frame.getController().getComponent(FrameComponent.SWING_JFRAME);
         final JScrollPane scrollPane = new JScrollPane();
         final JPanel editPanel = new JPanel();
@@ -73,7 +80,7 @@ public class CrudFactory {
         frame.getController().swingAdd(scrollPane);
         final Map<String, Object> fields = (HashMap<String, Object>) frame.getController().getComponent(FrameComponent.MAP_EDIT_FIELDS);
         frame.getTable().getSqlResult().getColumns().stream().forEachOrdered((field) -> {
-            final JLabel label = createJLabel(frame, field);
+            final JLabel label = createJLabel(field);
             final JTextField swingField = new JTextField();
             swingField.setBounds(calculator.calculateFieldBounds(lastComponentX, lastComponentY, label, field));
             swingField.setText(String.valueOf(frame.getTable().getValue(field)));
@@ -85,7 +92,7 @@ public class CrudFactory {
         jframe.repaint();
     }
 
-    private JLabel createJLabel(final Frame frame, final String name) {
+    private JLabel createJLabel(final String name) {
         if (lastComponentX == 0) {
             lastComponentX = calculator.calculateLastXPosition(frame);
         }
@@ -95,12 +102,12 @@ public class CrudFactory {
             lastComponentY += calculator.increaseYPosition();
         }
         final JLabel label = new JLabel();
-        label.setText(getLabelText(frame, name));
+        label.setText(getLabelText(name));
         label.setBounds(calculator.calculateLabelBounds(lastComponentX, lastComponentY, label));
         return label;
     }
 
-    private String getLabelText(final Frame frame, final String field) {
+    private String getLabelText(final String field) {
         return frame.getTable().getSqlResult().getAliasToRow().get(field).concat(":");
     }
 

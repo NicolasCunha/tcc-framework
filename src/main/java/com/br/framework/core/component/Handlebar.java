@@ -23,7 +23,7 @@ public class Handlebar implements Destroyable {
         this.frame = frame;
     }
 
-    public static Handlebar newInstance(final Frame frame) {
+    public static Handlebar getInstance(final Frame frame) {
         return new Handlebar(frame);
     }
 
@@ -120,6 +120,15 @@ public class Handlebar implements Destroyable {
         scrollEdit.setVisible(true);
         scrollGrid.setVisible(false);
         updateFormFields();
+    }
+
+    public boolean isGrid() {
+        final JScrollPane scrollGrid = (JScrollPane) frame.getController().getComponent(FrameComponent.SWING_JSCROLL_GRID);
+        return scrollGrid.isVisible();
+    }
+
+    public boolean isForm() {
+        return !isGrid();
     }
 
     private void updateFormFields() {

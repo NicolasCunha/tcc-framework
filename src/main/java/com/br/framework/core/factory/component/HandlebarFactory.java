@@ -8,8 +8,8 @@ import javax.swing.JButton;
 
 public class HandlebarFactory {
 
-    private final PositionCalculator calculator = PositionCalculator.newInstance();
-    private final JButtonFactory buttonFactory = JButtonFactory.newInstance();
+    private final PositionCalculator calculator = PositionCalculator.getInstance();
+    private final JButtonFactory buttonFactory = JButtonFactory.getInstance();
 
     private enum ButtonText {
 
@@ -35,7 +35,7 @@ public class HandlebarFactory {
 
     }
 
-    public static HandlebarFactory newInstance() {
+    public static HandlebarFactory getInstance() {
         return new HandlebarFactory();
     }
 

@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 public abstract class MetadataLoader {
 
     public static TableMetadata load(final String table) {
-        final TableMetadata metadata = TableMetadata.newInstance();
+        final TableMetadata metadata = TableMetadata.getInstance();
         final QueryResult queryResult = runQuery(table);
         while (queryResult.next()) {
             if (queryResult.getString("Key_name").equalsIgnoreCase("PRIMARY")) {

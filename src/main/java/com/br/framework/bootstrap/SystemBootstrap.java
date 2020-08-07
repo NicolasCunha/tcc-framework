@@ -19,19 +19,7 @@ public class SystemBootstrap {
                 .width(1024)
                 .height(768)
                 .centered(true)
-                .table("aluno")
-                .includeAttribute(
-                        "id",
-                        "Matrícula"
-                )
-                .includeAttribute(
-                        "nome",
-                        "Nome do Aluno"
-                )
-                .includeAttribute(
-                        "idade",
-                        "Idade do Aluno"
-                )
+                .table("aluno")                
                 .build();
         frame.show();        
     }

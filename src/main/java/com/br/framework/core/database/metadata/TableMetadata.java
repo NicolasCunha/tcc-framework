@@ -5,14 +5,14 @@ import java.util.List;
 
 public class TableMetadata {
 
-    private TableMetadata(){
-        
+    private TableMetadata() {
+
     }
-    
-    public static TableMetadata newInstance(){
+
+    public static TableMetadata getInstance() {
         return new TableMetadata();
     }
-    
+
     private List<String> primaryKey;
 
     public List<String> getPrimaryKey() {
@@ -25,6 +25,5 @@ public class TableMetadata {
     public void setPrimaryKey(List<String> primaryKey) {
         this.primaryKey = primaryKey;
     }
-    
 
 }
