@@ -8,20 +8,23 @@ import java.util.Map;
 import javax.swing.table.DefaultTableModel;
 
 public class TableModelFactory {
-    
+
     private static Map<String, Integer> columnPosition;
-    
-    private final Frame frame;
-    
-    private TableModelFactory(final Frame frame) {
-        this.frame = frame;
+
+    private static TableModelFactory tableModelFactory;
+
+    private TableModelFactory() {
+
     }
-    
-    public static TableModelFactory getInstance(final Frame frame) {
-        return new TableModelFactory(frame);
+
+    public static TableModelFactory getInstance() {
+        if (tableModelFactory == null) {
+            tableModelFactory = new TableModelFactory();
+        }
+        return tableModelFactory;
     }
-    
-    public DefaultTableModel createTableModel(final QueryResult result) {
+
+    public DefaultTableModel createTableModel(final Frame frame, final QueryResult result) {
         final DefaultTableModel model = new DefaultTableModel();
         if (!result.isEmpty()) {
             final List<Map<String, Object>> rows = result.getRows();
@@ -29,14 +32,14 @@ public class TableModelFactory {
             createColumns(model, columns, rows);
             createRows(model, rows);
         }
-        checkBuildAliases();
+        checkBuildAliases(frame);
         return model;
     }
-    
+
     public Map<String, Integer> getColumnPosition() {
         return columnPosition;
     }
-    
+
     private void createColumns(final DefaultTableModel model, final List<String> columns, final List<Map<String, Object>> rows) {
         int counter = 0;
         columnPosition = new LinkedHashMap<>();
@@ -46,19 +49,19 @@ public class TableModelFactory {
             counter++;
         }
     }
-    
+
     private void createRows(final DefaultTableModel model, final List<Map<String, Object>> rows) {
         rows.forEach((iterator) -> {
             model.addRow(iterator.values().toArray());
         });
     }
-    
-    private void checkBuildAliases() {
+
+    private void checkBuildAliases(final Frame frame) {
         columnPosition.keySet().forEach(key -> {
             if (!frame.getController().attribHasAlias(key)) {
                 frame.getController().addAttribAlias(key, key);
             }
         });
     }
-    
+
 }

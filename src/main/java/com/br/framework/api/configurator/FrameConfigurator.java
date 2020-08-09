@@ -163,10 +163,6 @@ public class FrameConfigurator {
     }
 
     public Frame build() throws SQLException, Exception {
-        final JFrameFactory jframeFactory;
-        final FrameFactory frameFactory;
-        final CrudFactory crudFactory;
-        final JFrame swingFrame;
         final Frame frame;
         if (config == null) {
             throw new Exception("Frame configuration is not defined.");
@@ -177,12 +173,11 @@ public class FrameConfigurator {
         if (!QueryService.isPoolDefined()) {
             QueryService.connectionPool(new ConnectionPool());
         }
-        jframeFactory = JFrameFactory.getInstance(config);
-        swingFrame = jframeFactory.build();
-        frameFactory = FrameFactory.getInstance(swingFrame, config);
-        frame = frameFactory.build();
-        crudFactory = CrudFactory.getInstance(frame);
-        crudFactory.createCrud();
+        frame = FrameFactory.getInstance().build(
+                JFrameFactory.getInstance().build(config),
+                config
+        );
+        CrudFactory.getInstance().createCrud(frame);
         config = null;
         return frame;
     }

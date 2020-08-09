@@ -5,17 +5,20 @@ import javax.swing.JFrame;
 
 public class JFrameFactory {
 
-    private final FrameConfig config;
+    private static JFrameFactory jframeFactory;
 
-    private JFrameFactory(final FrameConfig config) {
-        this.config = config;
+    private JFrameFactory() {
+
     }
 
-    public static JFrameFactory getInstance(final FrameConfig config) {
-        return new JFrameFactory(config);
+    public static JFrameFactory getInstance() {
+        if (jframeFactory == null) {
+            jframeFactory = new JFrameFactory();
+        }
+        return jframeFactory;
     }
 
-    public JFrame build() {
+    public JFrame build(final FrameConfig config) {
         final JFrame frame = new JFrame();
 
         setDimension(frame,

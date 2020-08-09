@@ -10,37 +10,38 @@ import com.br.framework.core.enumerator.FrameComponent;
 import javax.swing.JFrame;
 
 public class FrameFactory {
-    
+
     private enum SqlBoilerplate {
         SELECT_ALL("SELECT *"),
         SELECT("SELECT "),
         FROM("FROM "),
         SELECT_ALL_FROM(SELECT_ALL.sql().concat(FROM.sql()));
-        
+
         private final String sql;
-        
+
         private SqlBoilerplate(final String sql) {
             this.sql = sql;
         }
-        
+
         public String sql() {
             return this.sql;
         }
     }
-    
-    private final JFrame jframe;
-    private final FrameConfig config;
-    
-    private FrameFactory(final JFrame frame, final FrameConfig config){
-        this.jframe = frame;
-        this.config = config;
+
+    private static FrameFactory frameFactory;
+
+    private FrameFactory() {
+
     }
-    
-    public static FrameFactory getInstance(final JFrame frame, final FrameConfig config){
-        return new FrameFactory(frame, config);
+
+    public static FrameFactory getInstance() {
+        if (frameFactory == null) {
+            frameFactory = new FrameFactory();
+        }
+        return frameFactory;
     }
-    
-    public Frame build() {
+
+    public Frame build(final JFrame jframe, final FrameConfig config) {
         final Frame frame = Frame.getInstance(config);
         final Handlebar handlebar = Handlebar.getInstance(frame);
         final Table table = Table.getInstance(frame);
@@ -50,10 +51,10 @@ public class FrameFactory {
         frame.setMetadata(MetadataLoader.load(config.getTable()));
         frame.setTable(table);
         config.setSql(buildTableSqlFromAttributes(frame, config));
-        frame.getController().addComponent(FrameComponent.SWING_JFRAME, jframe);        
+        frame.getController().addComponent(FrameComponent.SWING_JFRAME, jframe);
         return frame;
     }
-    
+
     private String buildTableSqlFromAttributes(final Frame frame, final FrameConfig config) {
         if (config.getAttributes() == null || config.getAttributes().isEmpty()) {
             return SqlBoilerplate.SELECT_ALL_FROM.sql().concat(config.getTable());
@@ -72,7 +73,7 @@ public class FrameFactory {
             sql.append(SqlBoilerplate.FROM.sql().concat(config.getTable()));
             return sql.toString();
         }
-        
+
     }
-    
+
 }
