@@ -19,9 +19,10 @@ import javax.swing.table.DefaultTableModel;
 
 public class CrudFactory {
 
-    private final TableModelFactory modelFactory;
     private final PositionCalculator calculator = PositionCalculator.getInstance();
     private final HandlebarFactory handlebarFactory = HandlebarFactory.getInstance();
+
+    private static CrudFactory crudFactory;
 
     /**
      * Used in the components position calculations.
@@ -29,28 +30,31 @@ public class CrudFactory {
     private int lastComponentY = 0;
     private int lastComponentX = 0;
 
-    private final Frame frame;
+    private CrudFactory() {
 
-    private CrudFactory(final Frame frame) {
-        this.frame = frame;
-        this.modelFactory = TableModelFactory.getInstance(frame);
-    }
-    
-    public static CrudFactory getInstance(final Frame frame){
-        return new CrudFactory(frame);
     }
 
-    public void createCrud() throws SQLException {
-        createGrid();
-        createForm();
+    public static CrudFactory getInstance() {
+        if (crudFactory == null) {
+            crudFactory = new CrudFactory();
+        } else {
+            crudFactory.resetPositions();
+        }
+        return new CrudFactory();
+    }
+
+    public void createCrud(final Frame frame) throws SQLException {
+        createGrid(frame);
+        createForm(frame);
         handlebarFactory.build(frame);
     }
 
-    public void createGrid() throws SQLException {
+    public void createGrid(final Frame frame) throws SQLException {
         final JTable jtable = new JTable();
         final JScrollPane scrollPane = new JScrollPane(jtable);
         final QueryResult queryResult = QueryService.run(frame.getConfig().getSql());
-        final DefaultTableModel model = modelFactory.createTableModel(queryResult);
+        final TableModelFactory modelFactory = TableModelFactory.getInstance();
+        final DefaultTableModel model = modelFactory.createTableModel(frame, queryResult);
         final Map<String, Integer> columnPosition = modelFactory.getColumnPosition();
 
         jtable.setModel(model);
@@ -67,7 +71,7 @@ public class CrudFactory {
 
     }
 
-    private void createForm() {
+    private void createForm(final Frame frame) {
         final JFrame jframe = (JFrame) frame.getController().getComponent(FrameComponent.SWING_JFRAME);
         final JScrollPane scrollPane = new JScrollPane();
         final JPanel editPanel = new JPanel();
@@ -80,7 +84,7 @@ public class CrudFactory {
         frame.getController().swingAdd(scrollPane);
         final Map<String, Object> fields = (HashMap<String, Object>) frame.getController().getComponent(FrameComponent.MAP_EDIT_FIELDS);
         frame.getTable().getSqlResult().getColumns().stream().forEachOrdered((field) -> {
-            final JLabel label = createJLabel(field);
+            final JLabel label = createJLabel(frame, field);
             final JTextField swingField = new JTextField();
             swingField.setBounds(calculator.calculateFieldBounds(lastComponentX, lastComponentY, label, field));
             swingField.setText(String.valueOf(frame.getTable().getValue(field)));
@@ -92,7 +96,7 @@ public class CrudFactory {
         jframe.repaint();
     }
 
-    private JLabel createJLabel(final String name) {
+    private JLabel createJLabel(final Frame frame, final String name) {
         if (lastComponentX == 0) {
             lastComponentX = calculator.calculateLastXPosition(frame);
         }
@@ -102,13 +106,18 @@ public class CrudFactory {
             lastComponentY += calculator.increaseYPosition();
         }
         final JLabel label = new JLabel();
-        label.setText(getLabelText(name));
+        label.setText(getLabelText(frame, name));
         label.setBounds(calculator.calculateLabelBounds(lastComponentX, lastComponentY, label));
         return label;
     }
 
-    private String getLabelText(final String field) {
+    private String getLabelText(final Frame frame, final String field) {
         return frame.getTable().getSqlResult().getAliasToRow().get(field).concat(":");
+    }
+
+    private void resetPositions() {
+        lastComponentX = 0;
+        lastComponentY = 0;
     }
 
 }

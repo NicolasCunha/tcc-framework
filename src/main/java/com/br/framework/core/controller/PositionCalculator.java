@@ -11,6 +11,8 @@ public class PositionCalculator {
 
     private static int lastButtonY = 0;
 
+    private static PositionCalculator instance;
+
     private class PositionConstants {
 
         public static final int GRID_TABLE_X_POSITION = 50;
@@ -45,7 +47,12 @@ public class PositionCalculator {
     }
 
     public static PositionCalculator getInstance() {
-        return new PositionCalculator();
+        if (instance == null) {
+            instance = new PositionCalculator();
+        } else {
+            instance.resetY();
+        }
+        return instance;
     }
 
     public Rectangle calculateScrollPane(final Frame frame) {
@@ -134,6 +141,10 @@ public class PositionCalculator {
 
     public int increaseYPosition() {
         return PositionConstants.CALC_LABEL_INC_Y_POS;
+    }
+
+    private void resetY() {
+        lastButtonY = PositionConstants.INITIAL_Y_POS;
     }
 
 }

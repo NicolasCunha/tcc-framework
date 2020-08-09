@@ -10,6 +10,7 @@ public class HandlebarFactory {
 
     private final PositionCalculator calculator = PositionCalculator.getInstance();
     private final JButtonFactory buttonFactory = JButtonFactory.getInstance();
+    private static HandlebarFactory handlebarFactory;
 
     private enum ButtonText {
 
@@ -36,7 +37,10 @@ public class HandlebarFactory {
     }
 
     public static HandlebarFactory getInstance() {
-        return new HandlebarFactory();
+        if (handlebarFactory == null) {
+            handlebarFactory = new HandlebarFactory();
+        }
+        return handlebarFactory;
     }
 
     public void build(final Frame frame) {

@@ -21,13 +21,11 @@ import javax.swing.table.DefaultTableModel;
 public class Table implements Destroyable {
 
     private Frame frame;
-    private TableModelFactory modelFactory;
     private QueryResult sqlResult;
     private JTable jtable;
 
     private Table(final Frame frame) {
         this.frame = frame;
-        this.modelFactory = TableModelFactory.getInstance(frame);
     }
 
     public QueryResult getSqlResult() {
@@ -80,7 +78,7 @@ public class Table implements Destroyable {
         try {
             final JTable innerTable = (JTable) frame.getController().getComponent(FrameComponent.SWING_JTABLE);
             final QueryResult queryResult = QueryService.run(frame.getConfig().getSql());
-            final DefaultTableModel model = modelFactory.createTableModel(queryResult);
+            final DefaultTableModel model = TableModelFactory.getInstance().createTableModel(frame, queryResult);
             innerTable.setModel(model);
             frame.getController().swingRepaint();
         } catch (SQLException ex) {
@@ -133,7 +131,6 @@ public class Table implements Destroyable {
     public void destroy() {
         this.sqlResult.destroy();
         this.jtable = null;
-        this.modelFactory = null;
         this.frame = null;
     }
 
