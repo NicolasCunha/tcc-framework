@@ -1,11 +1,11 @@
 package com.br.framework.core.factory.component;
 
+import com.br.framework.api.Framework;
 import com.br.framework.core.component.Frame;
 import com.br.framework.core.controller.PositionCalculator;
-import com.br.framework.core.database.query.QueryResult;
-import com.br.framework.api.services.QueryService;
+import com.br.framework.core.database.queryresult.QueryResult;
 import com.br.framework.core.enumerator.FrameComponent;
-import com.br.framework.core.factory.swing.TableModelFactory;
+import com.br.framework.core.factory.swing.SwingComponentFactory;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,8 +52,8 @@ public class CrudFactory {
     public void createGrid(final Frame frame) throws SQLException {
         final JTable jtable = new JTable();
         final JScrollPane scrollPane = new JScrollPane(jtable);
-        final QueryResult queryResult = QueryService.run(frame.getConfig().getSql());
-        final TableModelFactory modelFactory = TableModelFactory.getInstance();
+        final QueryResult queryResult = Framework.run(frame.getConfig().getSql());
+        final SwingComponentFactory modelFactory = SwingComponentFactory.getInstance();
         final DefaultTableModel model = modelFactory.createTableModel(frame, queryResult);
         final Map<String, Integer> columnPosition = modelFactory.getColumnPosition();
 

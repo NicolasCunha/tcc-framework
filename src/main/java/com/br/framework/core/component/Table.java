@@ -1,10 +1,10 @@
 package com.br.framework.core.component;
 
+import com.br.framework.api.Framework;
 import com.br.framework.core.component.interfaces.Destroyable;
-import com.br.framework.core.database.query.QueryResult;
-import com.br.framework.api.services.QueryService;
+import com.br.framework.core.database.queryresult.QueryResult;
 import com.br.framework.core.enumerator.FrameComponent;
-import com.br.framework.core.factory.swing.TableModelFactory;
+import com.br.framework.core.factory.swing.SwingComponentFactory;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.sql.SQLException;
@@ -77,8 +77,8 @@ public class Table implements Destroyable {
     public void refresh() {
         try {
             final JTable innerTable = (JTable) frame.getController().getComponent(FrameComponent.SWING_JTABLE);
-            final QueryResult queryResult = QueryService.run(frame.getConfig().getSql());
-            final DefaultTableModel model = TableModelFactory.getInstance().createTableModel(frame, queryResult);
+            final QueryResult queryResult = Framework.run(frame.getConfig().getSql());
+            final DefaultTableModel model = SwingComponentFactory.getInstance().createTableModel(frame, queryResult);
             innerTable.setModel(model);
             frame.getController().swingRepaint();
         } catch (SQLException ex) {

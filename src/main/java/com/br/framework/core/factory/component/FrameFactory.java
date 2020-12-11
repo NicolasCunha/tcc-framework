@@ -10,6 +10,8 @@ import com.br.framework.core.enumerator.FrameComponent;
 import javax.swing.JFrame;
 
 public class FrameFactory {
+    
+    private MetadataLoader metadataLoader;
 
     private enum SqlBoilerplate {
         SELECT_ALL("SELECT *"),
@@ -31,7 +33,7 @@ public class FrameFactory {
     private static FrameFactory frameFactory;
 
     private FrameFactory() {
-
+        metadataLoader = new MetadataLoader();
     }
 
     public static FrameFactory getInstance() {
@@ -48,7 +50,7 @@ public class FrameFactory {
         final FrameController controller = FrameController.getInstance(frame);
         frame.setController(controller);
         frame.setHandlebar(handlebar);
-        frame.setMetadata(MetadataLoader.load(config.getTable()));
+        frame.setMetadata(metadataLoader.loadMetadata(config.getTable()));
         frame.setTable(table);
         config.setSql(buildTableSqlFromAttributes(frame, config));
         frame.getController().addComponent(FrameComponent.SWING_JFRAME, jframe);

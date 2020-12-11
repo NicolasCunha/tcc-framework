@@ -1,4 +1,4 @@
-package com.br.framework.core.database.query;
+package com.br.framework.core.database.queryresult;
 
 import com.br.framework.core.component.interfaces.Destroyable;
 import com.br.framework.api.services.PropertiesServices;
