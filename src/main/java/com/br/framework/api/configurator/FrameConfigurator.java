@@ -1,16 +1,15 @@
 package com.br.framework.api.configurator;
 
+import com.br.framework.api.Framework;
 import com.br.framework.core.component.Frame;
 import com.br.framework.core.database.connection.ConnectionPool;
-import com.br.framework.api.services.QueryService;
 import com.br.framework.core.factory.component.FrameFactory;
 import com.br.framework.core.factory.component.CrudFactory;
-import com.br.framework.core.factory.swing.JFrameFactory;
+import com.br.framework.core.factory.swing.SwingComponentFactory;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import javax.swing.JFrame;
 
 public class FrameConfigurator {
 
@@ -170,11 +169,11 @@ public class FrameConfigurator {
         if (config.getHeight() * config.getWidth() < (800 * 600)) {
             throw new Exception("Minimum resolution of 800x600 is required.");
         }
-        if (!QueryService.isPoolDefined()) {
-            QueryService.connectionPool(new ConnectionPool());
+        if (!Framework.isPoolDefined()) {
+            Framework.connectionPool(new ConnectionPool());
         }
         frame = FrameFactory.getInstance().build(
-                JFrameFactory.getInstance().build(config),
+                SwingComponentFactory.getInstance().createJFrameFromConfig(config),
                 config
         );
         CrudFactory.getInstance().createCrud(frame);

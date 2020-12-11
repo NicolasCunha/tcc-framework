@@ -7,7 +7,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Stack;
 
-public class ConnectionPool implements IConnectionPool {
+public final class ConnectionPool implements IConnectionPool {
 
     private final Stack<Connection> connectionStack = new Stack<>();
 
