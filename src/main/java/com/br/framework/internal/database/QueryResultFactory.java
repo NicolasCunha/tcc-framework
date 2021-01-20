@@ -5,31 +5,16 @@ import java.sql.SQLException;
 
 public class QueryResultFactory {
 
-    private final QueryMetadataFactory controller;
-
-    private static QueryResultFactory instance;
-
-    public static QueryResultFactory getInstance() {
-        return getInstance(false);
-    }
-
-    public static QueryResultFactory getInstance(boolean newInstance) {
-        if (instance == null || newInstance) {
-            instance = new QueryResultFactory();
-        }
-        return instance;
-    }
-
     private QueryResultFactory() {
-        controller = new QueryMetadataFactory();
+        // Empty.
     }
 
-    public QueryResult build(final ResultSet resultSet) throws SQLException {
+    public static QueryResult build(final ResultSet resultSet) throws SQLException {
         final QueryResult sqlResult = new QueryResult();
 
-        sqlResult.setRows(controller.buildRowsFromResultSet(resultSet));
-        sqlResult.setColumns(controller.buildColumnsFromResultSet(resultSet));
-        sqlResult.setAliasToRow(controller.mapColumnAlias(resultSet));
+        sqlResult.setRows(QueryMetadataFactory.buildRowsFromResultSet(resultSet));
+        sqlResult.setColumns(QueryMetadataFactory.buildColumnsFromResultSet(resultSet));
+        sqlResult.setAliasToRow(QueryMetadataFactory.mapColumnAlias(resultSet));
 
         return sqlResult;
     }

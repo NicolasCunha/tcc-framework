@@ -2,6 +2,7 @@ package com.br.framework.internal.component.factory;
 
 import com.br.framework.internal.component.TableMetadata;
 import com.br.framework.Framework;
+import com.br.framework.internal.database.Database;
 import com.br.framework.internal.tooling.InternalLogger;
 import com.br.framework.internal.database.QueryResult;
 import java.sql.SQLException;
@@ -30,7 +31,7 @@ public final class TableMetadataFactory {
         final TableMetadata metadata = TableMetadata.getInstance();
         final QueryResult queryResult;
         try {
-            queryResult = Framework.getInstance().query(String.format(MARIADB_METADATA_FROM_QUERY, table));
+            queryResult = Database.query(String.format(MARIADB_METADATA_FROM_QUERY, table));
             while (queryResult.next()) {
                 if (queryResult.getString("Key_name").equalsIgnoreCase("PRIMARY")) {
                     metadata.getPrimaryKey().add(queryResult.getString("Column_name"));
