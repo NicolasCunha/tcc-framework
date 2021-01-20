@@ -1,7 +1,9 @@
 package com.br.framework.internal.component;
 
 import com.br.framework.Framework;
+import com.br.framework.internal.component.event.BoolEventCommand;
 import com.br.framework.internal.component.factory.DmlQueryFactory;
+import com.br.framework.internal.database.Database;
 import com.br.framework.internal.database.QueryResult;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
@@ -15,7 +17,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-public class Handlebar implements IDestroyable {
+public class Handlebar implements Destroyable {
 
     private Window window;
     private JButton gridEditButton;
@@ -76,7 +78,7 @@ public class Handlebar implements IDestroyable {
         final JScrollPane scrollEdit = (JScrollPane) window.getController().getComponent(WindowComponentEnum.SWING_JSCROLL_EDIT);
         if (this.state == HandlebarState.INSERT) {
             oldValues.keySet().forEach(field -> {
-                window.getTable().setValue(field, oldValues.get(field));
+                window.getTable().setValueGrid(field, oldValues.get(field));
             });
             oldValues.clear();
         }
@@ -125,7 +127,7 @@ public class Handlebar implements IDestroyable {
         if (refTable.getSelectedRow() != -1) {
             fields.keySet().forEach((iterator) -> {
                 final JTextField field = (JTextField) fields.get(iterator);
-                field.setText(String.valueOf(window.getTable().getValue(iterator)));
+                field.setText(String.valueOf(window.getTable().getValueGrid(iterator)));
             });
         }
     }
@@ -136,15 +138,15 @@ public class Handlebar implements IDestroyable {
         getInsertButton().setEnabled(false);
         oldValues = new LinkedHashMap<>();
         try {
-            final QueryResult result = Framework.getInstance().query(String.format("select nextval(%s) seq from dual", window.getConfig().getSequence()));
+            final QueryResult result = Database.query(String.format("select nextval(%s) seq from dual", window.getConfig().getSequence()));
             result.toFirstRecord();
             final Long nextSequence = result.getLong("seq");
-            oldValues.put(window.getConfig().getPkField(), window.getTable().getValue(window.getConfig().getPkField()));
+            oldValues.put(window.getConfig().getPkField(), window.getTable().getValueGrid(window.getConfig().getPkField()));
             window.getConfig().getAttributes().keySet().stream().filter(field -> (!field.equals(window.getConfig().getPkField()))).forEachOrdered(field -> {
-                oldValues.put(field, window.getTable().getValue(field));
-                window.getTable().setValue(field, "");
+                oldValues.put(field, window.getTable().getValueGrid(field));
+                window.getTable().setValueGrid(field, "");
             });
-            window.getTable().setValue(window.getConfig().getPkField(), nextSequence);
+            window.getTable().setValueGrid(window.getConfig().getPkField(), nextSequence);
             updateFormFields();
         } catch (SQLException ex) {
             Logger.getLogger(Handlebar.class.getName()).log(Level.SEVERE, null, ex);
@@ -154,9 +156,9 @@ public class Handlebar implements IDestroyable {
     private void delete() {
         if (window.getTable().getSelectedRows().size() > 0) {
             final String query = DmlQueryFactory.getInstance().createDelete(window);
-            final Object value = window.getTable().getValue(window.getConfig().getPkField());
+            final Object value = window.getTable().getValueGrid(window.getConfig().getPkField());
             try {
-                Framework.getInstance().execute(query, value);
+                Database.execute(query, value);
                 window.getTable().refresh();
                 toGrid();
             } catch (SQLException ex) {
@@ -168,21 +170,37 @@ public class Handlebar implements IDestroyable {
     private void save() {
         getSaveButton().setEnabled(false);
         getInsertButton().setEnabled(true);
-        final String query = DmlQueryFactory.getInstance().createInsert(window);
-        final Object[] arguments = new Object[window.getConfig().getAttributes().size() - 1];
-        int i = 0;
-        for (final String field : window.getConfig().getAttributes().keySet()) {
-            if (!field.equals(window.getConfig().getPkField())) {
-                arguments[i] = window.getTable().getValueDetalhe(field);
-                i++;
+        String query;
+        boolean doContinue = true;
+        if (state == HandlebarState.INSERT) {
+            for (final BoolEventCommand command : window.getConfig().getBeforeInsertEvents()) {
+                doContinue = doContinue && command.execute();
             }
+            query = DmlQueryFactory.getInstance().createInsert(window);
+        } else {
+            query = "";
         }
-        try {
-            Framework.getInstance().execute(query, arguments);
-            window.getTable().refresh();
-            toGrid();
-        } catch (SQLException ex) {
-            Logger.getLogger(Handlebar.class.getName()).log(Level.SEVERE, null, ex);
+        if (doContinue) {
+            final Object[] arguments = new Object[window.getConfig().getAttributes().size() - 1];
+            int i = 0;
+            for (final String field : window.getConfig().getAttributes().keySet()) {
+                if (!field.equals(window.getConfig().getPkField())) {
+                    arguments[i] = window.getTable().getValue(field);
+                    i++;
+                }
+            }
+            try {
+                Database.execute(query, arguments);
+                window.getTable().refresh();
+                toGrid();
+                if (state == HandlebarState.INSERT) {
+                    window.getConfig().getAfterInsertEvents().forEach(action -> {
+                        action.execute();
+                    });
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Handlebar.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 

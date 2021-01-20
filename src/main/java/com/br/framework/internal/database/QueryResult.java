@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import com.br.framework.internal.component.IDestroyable;
+import com.br.framework.internal.component.Destroyable;
 
-public class QueryResult implements IDestroyable {
+public class QueryResult implements Destroyable {
 
     private List<Map<String, Object>> rows;
     private List<String> columns;

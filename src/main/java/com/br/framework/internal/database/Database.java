@@ -7,33 +7,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public final class QueryService {
+public final class Database {
 
-    private final ConnectionPool connectionPool;
-    private final QueryResultFactory queryResultFactory;
-    private static QueryService instance;
+    private static final ConnectionPool connectionPool = new ConnectionPool();
 
-    private QueryService() {
-        connectionPool = new ConnectionPool();
-        queryResultFactory = QueryResultFactory.getInstance(true);
-    }
-
-    public static QueryService getInstance() {
-        return getInstance(false);
-    }
-
-    public static QueryService getInstance(boolean newInstance) {
-        if (instance == null || newInstance) {
-            instance = new QueryService();
-        }
-        return instance;
-    }
-
-    private void logQuery(final String query) {
+    private static void logQuery(final String query) {
         logQuery(query, new Object[0]);
     }
 
-    private void logQuery(final String query, final Object... arguments) {
+    private static void logQuery(final String query, final Object... arguments) {
         InternalLogger.info(Framework.class, String.format("QUERY: %s", query));
         if (arguments != null && arguments.length > 0) {
             final StringBuilder argsStr = new StringBuilder();
@@ -47,17 +29,17 @@ public final class QueryService {
         }
     }
 
-    public QueryResult query(final String query) throws SQLException {
+    public static QueryResult query(final String query) throws SQLException {
         logQuery(query);
         final Connection conn = connectionPool.open();
         final PreparedStatement preparedStatement = conn.prepareStatement(query);
 
         final ResultSet resultSet = preparedStatement.executeQuery();
         connectionPool.close(conn);
-        return queryResultFactory.build(resultSet);
+        return QueryResultFactory.build(resultSet);
     }
 
-    public QueryResult query(final String query, final Object... arguments) throws SQLException {
+    public static QueryResult query(final String query, final Object... arguments) throws SQLException {
         logQuery(query, arguments);
         final Connection conn = connectionPool.open();
         final PreparedStatement preparedStatement = conn.prepareStatement(query);
@@ -67,10 +49,10 @@ public final class QueryService {
 
         final ResultSet resultSet = preparedStatement.executeQuery();
         connectionPool.close(conn);
-        return queryResultFactory.build(resultSet);
+        return QueryResultFactory.build(resultSet);
     }
 
-    public void execute(final String query) throws Exception {
+    public static void execute(final String query) throws Exception {
         logQuery(query);
         final Connection conn = connectionPool.open();
         final PreparedStatement preparedStatement = conn.prepareStatement(query);
@@ -78,7 +60,7 @@ public final class QueryService {
         connectionPool.close(conn);
     }
 
-    public void execute(final String query, final Object... arguments) throws SQLException {
+    public static void execute(final String query, final Object... arguments) throws SQLException {
         logQuery(query, arguments);
         final Connection conn = connectionPool.open();
         final PreparedStatement preparedStatement = conn.prepareStatement(query);
@@ -91,7 +73,7 @@ public final class QueryService {
         connectionPool.close(conn);
     }
 
-    public void setDatabaseCredentials(final String url,
+    public static void setDatabaseCredentials(final String url,
             final String user,
             final String password) {
         connectionPool.setUrl(url);

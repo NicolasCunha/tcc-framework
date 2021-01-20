@@ -10,7 +10,11 @@ import java.util.Map;
 
 public class QueryMetadataFactory {
 
-    public List<Map<String, Object>> buildRowsFromResultSet(final ResultSet resultSet) throws SQLException {
+    private QueryMetadataFactory() {
+        // Empty.
+    }
+
+    public static List<Map<String, Object>> buildRowsFromResultSet(final ResultSet resultSet) throws SQLException {
         final ResultSetMetaData resultSetMetadata = resultSet.getMetaData();
         final List<Map<String, Object>> rowList = new ArrayList<>();
         while (resultSet.next()) {
@@ -23,7 +27,7 @@ public class QueryMetadataFactory {
         return rowList;
     }
 
-    public List<String> buildColumnsFromResultSet(final ResultSet resultSet) throws SQLException {
+    public static List<String> buildColumnsFromResultSet(final ResultSet resultSet) throws SQLException {
         final ResultSetMetaData resultSetMetadata = resultSet.getMetaData();
         final List<String> fieldList = new ArrayList<>();
         resultSet.beforeFirst();
@@ -35,7 +39,7 @@ public class QueryMetadataFactory {
         return fieldList;
     }
 
-    public Map<String, String> mapColumnAlias(final ResultSet resultSet) throws SQLException {
+    public static Map<String, String> mapColumnAlias(final ResultSet resultSet) throws SQLException {
         final Map<String, String> mapping = new LinkedHashMap<>();
         final ResultSetMetaData resultSetMetadata = resultSet.getMetaData();
         resultSet.beforeFirst();

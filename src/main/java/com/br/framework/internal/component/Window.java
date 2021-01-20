@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JFrame;
 
-public class Window implements IDestroyable {
+public class Window implements Destroyable {
 
     private WindowConfiguration config;
     private Handlebar handlebar;

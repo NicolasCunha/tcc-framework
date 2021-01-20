@@ -3,6 +3,7 @@ package com.br.framework.internal.component;
 import com.br.framework.Framework;
 import com.br.framework.internal.database.QueryResult;
 import com.br.framework.internal.component.factory.SwingComponentFactory;
+import com.br.framework.internal.database.Database;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.sql.SQLException;
@@ -17,7 +18,7 @@ import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.DefaultTableModel;
 
-public class Table implements IDestroyable {
+public class Table implements Destroyable {
 
     private Window frame;
     private QueryResult sqlResult;
@@ -57,9 +58,8 @@ public class Table implements IDestroyable {
                 public void keyPressed(KeyEvent e) {
                     if (jtable.getSelectedRow() > -1) {
                         switch (e.getKeyCode()) {
-                            case KeyEvent.VK_F5:
+                            case KeyEvent.VK_F5 ->
                                 refresh();
-                                break;
                         }
                     }
                 }
@@ -76,7 +76,7 @@ public class Table implements IDestroyable {
     public void refresh() {
         try {
             final JTable innerTable = (JTable) frame.getController().getComponent(WindowComponentEnum.SWING_JTABLE);
-            final QueryResult queryResult = Framework.getInstance().query(frame.getConfig().getSql());
+            final QueryResult queryResult = Database.query(frame.getConfig().getSql());
             final DefaultTableModel model = SwingComponentFactory.getInstance().createTableModel(frame, queryResult);
             innerTable.setModel(model);
             frame.getController().swingRepaint();
@@ -116,7 +116,7 @@ public class Table implements IDestroyable {
         return rows;
     }
 
-    public Object getValue(final String name) {
+    public Object getValueGrid(final String name) {
         final int row = jtable.getSelectedRow();
         if (row > -1) {
             final String alias = (String) ((Map<String, Object>) frame.getComponentMap().get(WindowComponentEnum.MAP_ATRIB_TO_ALIAS)).get(name);
@@ -126,11 +126,11 @@ public class Table implements IDestroyable {
         }
     }
 
-    public Object getValueDetalhe(final String name) {
+    public Object getValue(final String name) {
         return ((Map<String, JTextField>) frame.getComponentMap().get(WindowComponentEnum.MAP_EDIT_FIELDS)).get(name).getText();
     }
 
-    public void setValue(final String name, final Object value) {
+    public void setValueGrid(final String name, final Object value) {
         final int row = jtable.getSelectedRow();
         if (row > -1) {
             final String alias = (String) ((Map<String, Object>) frame.getComponentMap().get(WindowComponentEnum.MAP_ATRIB_TO_ALIAS)).get(name);

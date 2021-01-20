@@ -5,6 +5,7 @@ import com.br.framework.Framework;
 import com.br.framework.internal.component.Window;
 import com.br.framework.internal.database.QueryResult;
 import com.br.framework.internal.component.WindowComponentEnum;
+import com.br.framework.internal.database.Database;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,8 +28,8 @@ public class CrudFactory {
     /**
      * Used in the components position calculations.
      */
-    private int lastComponentY = 0;
-    private int lastComponentX = 0;
+    private int compY = 0;
+    private int compX = 0;
 
     private CrudFactory() {
 
@@ -52,7 +53,7 @@ public class CrudFactory {
     public void createGrid(final Window frame) throws SQLException {
         final JTable jtable = new JTable();
         final JScrollPane scrollPane = new JScrollPane(jtable);
-        final QueryResult queryResult = Framework.getInstance().query(frame.getConfig().getSql());
+        final QueryResult queryResult = Database.query(frame.getConfig().getSql());
         final SwingComponentFactory modelFactory = SwingComponentFactory.getInstance();
         final DefaultTableModel model = modelFactory.createTableModel(frame, queryResult);
         final Map<String, Integer> columnPosition = modelFactory.getColumnPosition();
@@ -83,32 +84,36 @@ public class CrudFactory {
         frame.getController().addComponent(WindowComponentEnum.SWING_EDIT_PANEL, editPanel);
         frame.getController().addComponent(WindowComponentEnum.SWING_JSCROLL_EDIT, scrollPane);
         frame.getController().swingAdd(scrollPane);
+        createLabelsAndFields(frame, editPanel);
+        jframe.repaint();
+    }
+    
+    private void createLabelsAndFields(final Window frame, final JPanel editPanel){
         final Map<String, Object> fields = (HashMap<String, Object>) frame.getController().getComponent(WindowComponentEnum.MAP_EDIT_FIELDS);
         frame.getTable().getSqlResult().getColumns().stream().forEachOrdered((field) -> {
             final JLabel label = createJLabel(frame, field);
             final JTextField swingField = new JTextField();
-            swingField.setBounds(calculator.calculateFieldBounds(lastComponentX, lastComponentY, label, field));
-            swingField.setText(String.valueOf(frame.getTable().getValue(field)));
+            swingField.setBounds(calculator.calculateFieldBounds(compX, compY, label, field));
+            swingField.setText(String.valueOf(frame.getTable().getValueGrid(field)));
             fields.put(field, swingField);
             frame.getController().addComponent(WindowComponentEnum.MAP_EDIT_FIELDS, fields);
             editPanel.add(label);
             editPanel.add(swingField);
         });
-        jframe.repaint();
     }
 
     private JLabel createJLabel(final Window frame, final String name) {
-        if (lastComponentX == 0) {
-            lastComponentX = calculator.calculateLastXPosition(frame);
+        if (compX == 0) {
+            compX = calculator.calculateLastXPosition(frame);
         }
-        if (lastComponentY == 0) {
-            lastComponentY = calculator.calculateLastXPosition(frame);
+        if (compY == 0) {
+            compY = calculator.calculateLastXPosition(frame);
         } else {
-            lastComponentY += calculator.increaseYPosition();
+            compY += calculator.increaseYPosition();
         }
         final JLabel label = new JLabel();
         label.setText(getLabelText(frame, name));
-        label.setBounds(calculator.calculateLabelBounds(lastComponentX, lastComponentY, label));
+        label.setBounds(calculator.calculateLabelBounds(compX, compY, label));
         return label;
     }
 
@@ -117,8 +122,8 @@ public class CrudFactory {
     }
 
     private void resetPositions() {
-        lastComponentX = 0;
-        lastComponentY = 0;
+        compX = 0;
+        compY = 0;
     }
 
 }
