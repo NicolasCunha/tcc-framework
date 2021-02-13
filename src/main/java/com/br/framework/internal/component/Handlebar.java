@@ -1,10 +1,9 @@
 package com.br.framework.internal.component;
 
-import com.br.framework.Framework;
 import com.br.framework.internal.component.event.BoolEventCommand;
 import com.br.framework.internal.component.factory.DmlQueryFactory;
-import com.br.framework.internal.database.Database;
-import com.br.framework.internal.database.QueryResult;
+import com.br.framework.FrameworkDatabase;
+import com.br.framework.internal.infra.QueryResult;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -138,7 +137,7 @@ public class Handlebar implements Destroyable {
         getInsertButton().setEnabled(false);
         oldValues = new LinkedHashMap<>();
         try {
-            final QueryResult result = Database.query(String.format("select nextval(%s) seq from dual", window.getConfig().getSequence()));
+            final QueryResult result = FrameworkDatabase.query(String.format("select nextval(%s) seq from dual", window.getConfig().getSequence()));
             result.toFirstRecord();
             final Long nextSequence = result.getLong("seq");
             oldValues.put(window.getConfig().getPkField(), window.getTable().getValueGrid(window.getConfig().getPkField()));
@@ -158,7 +157,7 @@ public class Handlebar implements Destroyable {
             final String query = DmlQueryFactory.getInstance().createDelete(window);
             final Object value = window.getTable().getValueGrid(window.getConfig().getPkField());
             try {
-                Database.execute(query, value);
+                FrameworkDatabase.execute(query, value);
                 window.getTable().refresh();
                 toGrid();
             } catch (SQLException ex) {
@@ -190,7 +189,7 @@ public class Handlebar implements Destroyable {
                 }
             }
             try {
-                Database.execute(query, arguments);
+                FrameworkDatabase.execute(query, arguments);
                 window.getTable().refresh();
                 toGrid();
                 if (state == HandlebarState.INSERT) {

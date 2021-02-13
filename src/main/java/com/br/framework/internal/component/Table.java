@@ -1,9 +1,8 @@
 package com.br.framework.internal.component;
 
-import com.br.framework.Framework;
-import com.br.framework.internal.database.QueryResult;
+import com.br.framework.internal.infra.QueryResult;
 import com.br.framework.internal.component.factory.SwingComponentFactory;
-import com.br.framework.internal.database.Database;
+import com.br.framework.FrameworkDatabase;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.sql.SQLException;
@@ -58,8 +57,9 @@ public class Table implements Destroyable {
                 public void keyPressed(KeyEvent e) {
                     if (jtable.getSelectedRow() > -1) {
                         switch (e.getKeyCode()) {
-                            case KeyEvent.VK_F5 ->
+                            case KeyEvent.VK_F5:
                                 refresh();
+                                break;
                         }
                     }
                 }
@@ -76,10 +76,10 @@ public class Table implements Destroyable {
     public void refresh() {
         try {
             final JTable innerTable = (JTable) frame.getController().getComponent(WindowComponentEnum.SWING_JTABLE);
-            final QueryResult queryResult = Database.query(frame.getConfig().getSql());
-            final DefaultTableModel model = SwingComponentFactory.getInstance().createTableModel(frame, queryResult);
+            final QueryResult queryResult = FrameworkDatabase.query(frame.getConfig().getSql());
+            final DefaultTableModel model = SwingComponentFactory.createTableModel(frame, queryResult);
             innerTable.setModel(model);
-            frame.getController().swingRepaint();
+            frame.getController().repaint();
         } catch (SQLException ex) {
             Logger.getLogger(Handlebar.class.getName()).log(Level.SEVERE, null, ex);
         }

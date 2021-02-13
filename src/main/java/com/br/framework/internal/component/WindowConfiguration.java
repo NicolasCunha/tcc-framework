@@ -1,4 +1,4 @@
-package com.br.framework.configurator;
+package com.br.framework.internal.component;
 
 import java.util.LinkedHashMap;
 import java.util.List;

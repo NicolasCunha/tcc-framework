@@ -1,6 +1,6 @@
 package com.br.framework.internal.component.factory;
 
-import com.br.framework.configurator.WindowConfiguration;
+import com.br.framework.internal.component.WindowConfiguration;
 import com.br.framework.internal.component.Window;
 
 public class DmlQueryFactory {

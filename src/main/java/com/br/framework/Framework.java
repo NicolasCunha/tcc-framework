@@ -1,6 +1,6 @@
 package com.br.framework;
 
-import com.br.framework.configurator.WindowConfigurator;
+import com.br.framework.internal.component.WindowConfigurator;
 
 public final class Framework {
 
@@ -9,7 +9,7 @@ public final class Framework {
     }
 
     public static WindowConfigurator windowConfigurator() {
-        return WindowConfigurator.getInstance().newConfiguration();
+        return WindowConfigurator.getInstance();
     }
 
 }

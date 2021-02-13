@@ -2,13 +2,13 @@ package com.br.framework.internal.test;
 
 import com.br.framework.Framework;
 import com.br.framework.internal.component.Window;
-import com.br.framework.internal.database.Database;
+import com.br.framework.FrameworkDatabase;
 
 public class RuntimeTest {
 
     public static void main(String[] args) throws Exception {
-        Database.setDatabaseCredentials("jdbc:mariadb://localhost:3306/tcc", "root", "root"); // Credenciais do banco
-        final Window frame = Framework.windowConfigurator()
+        FrameworkDatabase.setDatabaseCredentials("jdbc:mariadb://localhost:3306/tcc", "root", "root"); // Credenciais do banco
+        final Window window = Framework.windowConfigurator()
                 .title("Cadastro de Produtos") // Titulo da Janela
                 .width(1024) // Largura
                 .height(768) // Altura
@@ -21,7 +21,7 @@ public class RuntimeTest {
                 .primaryKey("id_produto") // Chave primaria
                 .sequence("produto_seq") // Sequence do banco (geracao de chaves)
                 .build();
-        frame.show(); // Exibe a tela
+        window.show(); // Exibe a tela
     }
 
 }

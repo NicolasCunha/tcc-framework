@@ -1,6 +1,5 @@
-package com.br.framework.configurator;
+package com.br.framework.internal.component;
 
-import com.br.framework.internal.component.Window;
 import com.br.framework.internal.component.factory.WindowFactory;
 import com.br.framework.internal.component.factory.CrudFactory;
 import com.br.framework.internal.component.factory.SwingComponentFactory;
@@ -15,10 +14,10 @@ public class WindowConfigurator {
     }
 
     public static WindowConfigurator getInstance() {
-        return new WindowConfigurator();
+        return new WindowConfigurator().newConfiguration();
     }
 
-    public WindowConfigurator newConfiguration() {
+    private WindowConfigurator newConfiguration() {
         config = WindowConfiguration.newInstance();
         return this;
     }
@@ -78,11 +77,11 @@ public class WindowConfigurator {
             throw new Exception("Minimum resolution of 800x600 is required.");
         }
 
-        frame = WindowFactory.getInstance().build(
-                SwingComponentFactory.getInstance().createJFrameFromConfig(config),
+        frame = WindowFactory.build(
+                SwingComponentFactory.createJFrameFromConfig(config),
                 config
         );
-        CrudFactory.getInstance().createCrud(frame);
+        CrudFactory.createCrud(frame);
         config = null;
         return frame;
     }
