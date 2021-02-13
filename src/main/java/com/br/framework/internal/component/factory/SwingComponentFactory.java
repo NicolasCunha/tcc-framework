@@ -1,8 +1,8 @@
 package com.br.framework.internal.component.factory;
 
-import com.br.framework.configurator.WindowConfiguration;
+import com.br.framework.internal.component.WindowConfiguration;
 import com.br.framework.internal.component.Window;
-import com.br.framework.internal.database.QueryResult;
+import com.br.framework.internal.infra.QueryResult;
 import java.awt.Rectangle;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -13,26 +13,9 @@ import javax.swing.table.DefaultTableModel;
 
 public final class SwingComponentFactory {
 
-    private Map<String, Integer> columnPosition;
+    private static Map<String, Integer> columnPosition;
 
-    private static SwingComponentFactory instance;
-
-    private SwingComponentFactory() {
-        columnPosition = new LinkedHashMap<>();
-    }
-
-    public static SwingComponentFactory getInstance() {
-        return new SwingComponentFactory();
-    }
-
-    public static SwingComponentFactory getInstance(final boolean newInstance) {
-        if (instance == null || newInstance) {
-            instance = new SwingComponentFactory();
-        }
-        return instance;
-    }
-
-    public DefaultTableModel createTableModel(final Window frame, final QueryResult result) {
+    public static DefaultTableModel createTableModel(final Window frame, final QueryResult result) {
         final DefaultTableModel model = new DefaultTableModel();
         if (!result.isEmpty()) {
             final List<Map<String, Object>> rows = result.getRows();
@@ -44,11 +27,13 @@ public final class SwingComponentFactory {
         return model;
     }
 
-    public Map<String, Integer> getColumnPosition() {
-        return columnPosition;
+    public static Map<String, Integer> getColumnPosition() {
+        Map<String, Integer> ret = columnPosition;
+        columnPosition = new LinkedHashMap<>();
+        return ret;
     }
 
-    private void createColumns(final DefaultTableModel model, final List<String> columns, final List<Map<String, Object>> rows) {
+    private static void createColumns(final DefaultTableModel model, final List<String> columns, final List<Map<String, Object>> rows) {
         int counter = 0;
         columnPosition = new LinkedHashMap<>();
         for (String iterator : rows.get(0).keySet()) {
@@ -58,21 +43,21 @@ public final class SwingComponentFactory {
         }
     }
 
-    private void createRows(final DefaultTableModel model, final List<Map<String, Object>> rows) {
+    private static void createRows(final DefaultTableModel model, final List<Map<String, Object>> rows) {
         rows.forEach((iterator) -> {
             model.addRow(iterator.values().toArray());
         });
     }
 
-    private void checkBuildAliases(final Window frame) {
+    private static void checkBuildAliases(final Window frame) {
         columnPosition.keySet().forEach(key -> {
-            if (!frame.getController().attribHasAlias(key)) {
-                frame.getController().addAttribAlias(key, key);
+            if (!frame.getController().isAttributeHasAlias(key)) {
+                frame.getController().addAttributeAlias(key, key);
             }
         });
     }
 
-    public JFrame createJFrameFromConfig(final WindowConfiguration config) {
+    public static JFrame createJFrameFromConfig(final WindowConfiguration config) {
         final JFrame frame = new JFrame();
 
         setDimension(frame,
@@ -91,17 +76,17 @@ public final class SwingComponentFactory {
         return frame;
     }
 
-    private void setDimension(final JFrame frame, final int width, final int height) {
+    private static void setDimension(final JFrame frame, final int width, final int height) {
         frame.setBounds(0, 0, width, height);
     }
 
-    private void setCentered(final JFrame frame, final boolean resizable) {
+    private static void setCentered(final JFrame frame, final boolean resizable) {
         if (resizable) {
             frame.setLocationRelativeTo(null);
         }
     }
 
-    public JButton createJButton(final String content, final Rectangle bounds) {
+    public static JButton createJButton(final String content, final Rectangle bounds) {
         final JButton button = new JButton();
         button.setText(content);
         button.setBounds(bounds);

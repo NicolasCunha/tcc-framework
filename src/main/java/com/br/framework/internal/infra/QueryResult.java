@@ -1,10 +1,13 @@
-package com.br.framework.internal.database;
+package com.br.framework.internal.infra;
 
+import com.br.framework.internal.infra.QueryMetadataFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.br.framework.internal.component.Destroyable;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class QueryResult implements Destroyable {
 
@@ -18,6 +21,16 @@ public class QueryResult implements Destroyable {
         counter = -1;
         columns = new ArrayList<>();
         aliasToRow = new HashMap<>();
+    }
+    
+    public static QueryResult getResult(final ResultSet resultSet) throws SQLException {
+        final QueryResult sqlResult = new QueryResult();
+
+        sqlResult.setRows(QueryMetadataFactory.buildRowsFromResultSet(resultSet));
+        sqlResult.setColumns(QueryMetadataFactory.buildColumnsFromResultSet(resultSet));
+        sqlResult.setAliasToRow(QueryMetadataFactory.mapColumnAlias(resultSet));
+
+        return sqlResult;
     }
 
     public void setRows(List<Map<String, Object>> rows) {

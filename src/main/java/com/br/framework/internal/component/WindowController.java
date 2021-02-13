@@ -17,12 +17,12 @@ public class WindowController {
         return new WindowController(frame);
     }
 
-    public void swingRepaint() {
+    public void repaint() {
         final JFrame jframe = (JFrame) getComponent(WindowComponentEnum.SWING_JFRAME);
         jframe.repaint();
     }
 
-    public void swingAdd(final Component c) {
+    public void addComponent(final Component c) {
         final JFrame jframe = (JFrame) getComponent(WindowComponentEnum.SWING_JFRAME);
         jframe.add(c);
     }
@@ -45,11 +45,11 @@ public class WindowController {
         return ((Map<String, Object>) frame.getComponentMap().get(WindowComponentEnum.MAP_ATRIB_TO_ALIAS));
     }
 
-    public void addAttribAlias(final String attrib, final String alias) {
+    public void addAttributeAlias(final String attrib, final String alias) {
         getAttributeAliases().put(attrib, alias);
     }
 
-    public boolean attribHasAlias(final String attrib) {
+    public boolean isAttributeHasAlias(final String attrib) {
         return getAttributeAliases().containsKey(attrib);
     }
 

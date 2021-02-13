@@ -1,13 +1,64 @@
-package com.br.framework.internal.database;
+package com.br.framework;
 
 import com.br.framework.Framework;
-import com.br.framework.internal.tooling.InternalLogger;
+import com.br.framework.internal.infra.InternalLogger;
+import com.br.framework.internal.infra.QueryResult;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Stack;
 
-public final class Database {
+public final class FrameworkDatabase {
+
+    private static class ConnectionPool {
+
+        private String url, user, password;
+
+        private final Stack<Connection> connectionStack = new Stack<>();
+
+        private Connection newConnection() throws SQLException {
+            return DriverManager.getConnection(url, user, password);
+        }
+
+        public Connection open() throws SQLException {
+            if (!connectionStack.isEmpty()) {
+                return connectionStack.pop();
+            } else {
+                return newConnection();
+            }
+        }
+
+        public void close(final Connection connection) {
+            connectionStack.add(connection);
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public String getUser() {
+            return user;
+        }
+
+        public void setUser(String user) {
+            this.user = user;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+    }
 
     private static final ConnectionPool connectionPool = new ConnectionPool();
 
@@ -36,7 +87,7 @@ public final class Database {
 
         final ResultSet resultSet = preparedStatement.executeQuery();
         connectionPool.close(conn);
-        return QueryResultFactory.build(resultSet);
+        return QueryResult.getResult(resultSet);
     }
 
     public static QueryResult query(final String query, final Object... arguments) throws SQLException {
@@ -49,7 +100,7 @@ public final class Database {
 
         final ResultSet resultSet = preparedStatement.executeQuery();
         connectionPool.close(conn);
-        return QueryResultFactory.build(resultSet);
+        return QueryResult.getResult(resultSet);
     }
 
     public static void execute(final String query) throws Exception {

@@ -7,9 +7,7 @@ import javax.swing.JButton;
 
 public class HandlebarFactory {
 
-    private final PositionFactory calculator = PositionFactory.getInstance();
-    private final SwingComponentFactory swingFactory = SwingComponentFactory.getInstance();
-    private static HandlebarFactory handlebarFactory;
+    private static final PositionFactory calculator = PositionFactory.getInstance();
 
     private enum ButtonTextEnum {
 
@@ -31,44 +29,33 @@ public class HandlebarFactory {
 
     }
 
-    private HandlebarFactory() {
-        // Empty.
-    }
-
-    public static HandlebarFactory getInstance() {
-        if (handlebarFactory == null) {
-            handlebarFactory = new HandlebarFactory();
-        }
-        return handlebarFactory;
-    }
-
-    public void build(final Window window) {
+    public static void build(final Window window) {
         final Handlebar handlebar = window.getHandlebar();
         // Grid / Form
-        JButton button = swingFactory.createJButton(ButtonTextEnum.GRID_FORM.desc(), calculator.calculateButtonBounds(window));
+        JButton button = SwingComponentFactory.createJButton(ButtonTextEnum.GRID_FORM.desc(), calculator.calculateButtonBounds(window));
         handlebar.setupGridFormBehavior(button);
         handlebar.setGridEditButton(button);
-        window.getController().swingAdd(button);
+        window.getController().addComponent(button);
         // Insert
-        button = swingFactory.createJButton(ButtonTextEnum.INSERT.desc(), calculator.calculateButtonBounds(window));
+        button = SwingComponentFactory.createJButton(ButtonTextEnum.INSERT.desc(), calculator.calculateButtonBounds(window));
         handlebar.setupInsertBehavior(button);
         handlebar.setInsertButton(button);
-        window.getController().swingAdd(button);
+        window.getController().addComponent(button);
         // Remove
-        button = swingFactory.createJButton(ButtonTextEnum.DELETE.desc(), calculator.calculateButtonBounds(window));
+        button = SwingComponentFactory.createJButton(ButtonTextEnum.DELETE.desc(), calculator.calculateButtonBounds(window));
         handlebar.setupRemoveBehavior(button);
         handlebar.setRemoveButton(button);
-        window.getController().swingAdd(button);
+        window.getController().addComponent(button);
         // Save
-        button = swingFactory.createJButton(ButtonTextEnum.SAVE.desc(), calculator.calculateButtonBounds(window));
+        button = SwingComponentFactory.createJButton(ButtonTextEnum.SAVE.desc(), calculator.calculateButtonBounds(window));
         handlebar.setupSaveBehavior(button);
         handlebar.setSaveButton(button);
-        window.getController().swingAdd(button);
+        window.getController().addComponent(button);
         // Close / Exit
-        button = swingFactory.createJButton(ButtonTextEnum.CLOSE_EXIT.desc(), calculator.calculateButtonBounds(window));
+        button = SwingComponentFactory.createJButton(ButtonTextEnum.CLOSE_EXIT.desc(), calculator.calculateButtonBounds(window));
         handlebar.setupCloseExitBehavior(button);
         handlebar.setExitCloseButton(button);
-        window.getController().swingAdd(button);
+        window.getController().addComponent(button);
     }
 
 }

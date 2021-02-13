@@ -1,4 +1,4 @@
-package com.br.framework.internal.tooling;
+package com.br.framework.internal.infra;
 
 import java.util.HashMap;
 import java.util.Map;

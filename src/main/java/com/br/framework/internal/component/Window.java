@@ -1,6 +1,5 @@
 package com.br.framework.internal.component;
 
-import com.br.framework.configurator.WindowConfiguration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
