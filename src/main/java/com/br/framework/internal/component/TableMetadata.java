@@ -6,7 +6,7 @@ import java.util.List;
 public class TableMetadata {
 
     private TableMetadata() {
-
+        // Empty constructor.
     }
 
     public static TableMetadata getInstance() {

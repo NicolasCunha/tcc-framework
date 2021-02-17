@@ -5,24 +5,11 @@ import com.br.framework.internal.component.Window;
 
 public class DmlQueryFactory {
 
-    private static DmlQueryFactory instance;
-
     private DmlQueryFactory() {
         // Empty.
     }
 
-    public static DmlQueryFactory getInstance() {
-        return getInstance(false);
-    }
-
-    public static DmlQueryFactory getInstance(final boolean newInstance) {
-        if (instance == null || newInstance) {
-            instance = new DmlQueryFactory();
-        }
-        return instance;
-    }
-
-    public String createInsert(final Window window) {
+    public static String createInsert(final Window window) {
         final WindowConfiguration config = window.getConfig();
         final String dbTable = config.getTable();
         final String sequence = config.getSequence();
@@ -47,8 +34,8 @@ public class DmlQueryFactory {
         builder.append(")");
         return builder.toString();
     }
-    
-    public String createDelete(final Window window){
+
+    public static String createDelete(final Window window) {
         final StringBuilder builder = new StringBuilder();
         builder.append(String.format("DELETE FROM %s ", window.getConfig().getTable()));
         builder.append(String.format("WHERE %s = ? ", window.getConfig().getPkField()));

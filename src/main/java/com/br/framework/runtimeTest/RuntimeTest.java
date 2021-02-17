@@ -1,14 +1,14 @@
-package com.br.framework.internal.test;
+package com.br.framework.runtimeTest;
 
-import com.br.framework.Framework;
 import com.br.framework.internal.component.Window;
-import com.br.framework.FrameworkDatabase;
+import com.br.framework.Database;
+import com.br.framework.WindowBuilder;
 
 public class RuntimeTest {
 
     public static void main(String[] args) throws Exception {
-        FrameworkDatabase.setDatabaseCredentials("jdbc:mariadb://localhost:3306/tcc", "root", "root"); // Credenciais do banco
-        final Window window = Framework.windowConfigurator()
+        Database.setDatabaseCredentials("jdbc:mariadb://localhost:3306/tcc", "root", "root"); // Credenciais do banco
+        final Window window = WindowBuilder.getInstance()
                 .title("Cadastro de Produtos") // Titulo da Janela
                 .width(1024) // Largura
                 .height(768) // Altura

@@ -1,9 +1,9 @@
 package com.br.framework.internal.component.factory;
 
 import com.br.framework.internal.component.TableMetadata;
-import com.br.framework.FrameworkDatabase;
-import com.br.framework.internal.infra.InternalLogger;
-import com.br.framework.internal.infra.QueryResult;
+import com.br.framework.Database;
+import com.br.framework.internal.logger.InternalLogger;
+import com.br.framework.internal.queryResult.QueryResult;
 import java.sql.SQLException;
 
 public final class TableMetadataFactory {
@@ -13,7 +13,7 @@ public final class TableMetadataFactory {
         final TableMetadata metadata = TableMetadata.getInstance();
         final QueryResult queryResult;
         try {
-            queryResult = FrameworkDatabase.query(String.format(MARIADB_METADATA_FROM_QUERY, table));
+            queryResult = Database.query(String.format(MARIADB_METADATA_FROM_QUERY, table));
             while (queryResult.next()) {
                 if (queryResult.getString("Key_name").equalsIgnoreCase("PRIMARY")) {
                     metadata.getPrimaryKey().add(queryResult.getString("Column_name"));

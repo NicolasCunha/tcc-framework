@@ -1,8 +1,8 @@
 package com.br.framework.internal.component;
 
-import com.br.framework.internal.infra.QueryResult;
+import com.br.framework.internal.queryResult.QueryResult;
 import com.br.framework.internal.component.factory.SwingComponentFactory;
-import com.br.framework.FrameworkDatabase;
+import com.br.framework.Database;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.sql.SQLException;
@@ -76,7 +76,7 @@ public class Table implements Destroyable {
     public void refresh() {
         try {
             final JTable innerTable = (JTable) frame.getController().getComponent(WindowComponentEnum.SWING_JTABLE);
-            final QueryResult queryResult = FrameworkDatabase.query(frame.getConfig().getSql());
+            final QueryResult queryResult = Database.query(frame.getConfig().getSql());
             final DefaultTableModel model = SwingComponentFactory.createTableModel(frame, queryResult);
             innerTable.setModel(model);
             frame.getController().repaint();
@@ -99,6 +99,7 @@ public class Table implements Destroyable {
 
     public List<Map<String, Object>> getSelectedRows() {
         final List<Map<String, Object>> rows = new ArrayList<>();
+
         if (jtable.getSelectedRows().length > 0) {
             final int[] selectedRows = jtable.getSelectedRows();
             final Map<String, Object> fields = (HashMap<String, Object>) frame.getController().getComponent(WindowComponentEnum.MAP_EDIT_FIELDS);

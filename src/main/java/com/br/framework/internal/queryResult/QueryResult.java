@@ -1,6 +1,6 @@
-package com.br.framework.internal.infra;
+package com.br.framework.internal.queryResult;
 
-import com.br.framework.internal.infra.QueryMetadataFactory;
+import com.br.framework.internal.queryResult.QueryMetadataFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
