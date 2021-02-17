@@ -2,7 +2,7 @@ package com.br.framework.internal.component.factory;
 
 import com.br.framework.internal.component.WindowConfiguration;
 import com.br.framework.internal.component.Window;
-import com.br.framework.internal.infra.QueryResult;
+import com.br.framework.internal.queryResult.QueryResult;
 import java.awt.Rectangle;
 import java.util.LinkedHashMap;
 import java.util.List;

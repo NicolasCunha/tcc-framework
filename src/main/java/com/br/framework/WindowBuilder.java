@@ -1,67 +1,69 @@
-package com.br.framework.internal.component;
+package com.br.framework;
 
+import com.br.framework.internal.component.Window;
+import com.br.framework.internal.component.WindowConfiguration;
 import com.br.framework.internal.component.factory.WindowFactory;
 import com.br.framework.internal.component.factory.CrudFactory;
 import com.br.framework.internal.component.factory.SwingComponentFactory;
 import java.sql.SQLException;
 
-public class WindowConfigurator {
+public class WindowBuilder {
 
     private WindowConfiguration config;
 
-    private WindowConfigurator() {
+    private WindowBuilder() {
         // Empty.
     }
 
-    public static WindowConfigurator getInstance() {
-        return new WindowConfigurator().newConfiguration();
+    public static WindowBuilder getInstance() {
+        return new WindowBuilder().newConfiguration();
     }
 
-    private WindowConfigurator newConfiguration() {
+    private WindowBuilder newConfiguration() {
         config = WindowConfiguration.newInstance();
         return this;
     }
 
-    public WindowConfigurator title(final String title) {
+    public WindowBuilder title(final String title) {
         config.setTitle(title);
         return this;
     }
 
-    public WindowConfigurator width(final int width) {
+    public WindowBuilder width(final int width) {
         config.setWidth(width);
         return this;
     }
 
-    public WindowConfigurator height(final int height) {
+    public WindowBuilder height(final int height) {
         config.setHeight(height);
         return this;
     }
 
-    public WindowConfigurator centered(final boolean centered) {
+    public WindowBuilder centered(final boolean centered) {
         config.setCentered(centered);
         return this;
     }
 
-    public WindowConfigurator table(final String table) {
+    public WindowBuilder table(final String table) {
         config.setTable(table);
         return this;
     }
 
-    public WindowConfigurator includeAttribute(final String attrib) {
+    public WindowBuilder includeAttribute(final String attrib) {
         return includeAttribute(attrib, attrib);
     }
 
-    public WindowConfigurator includeAttribute(final String attrib, final String alias) {
+    public WindowBuilder includeAttribute(final String attrib, final String alias) {
         config.getAttributes().put(attrib, alias);
         return this;
     }
 
-    public WindowConfigurator sequence(final String seqName) {
+    public WindowBuilder sequence(final String seqName) {
         config.setSequence(seqName);
         return this;
     }
 
-    public WindowConfigurator primaryKey(final String field) {
+    public WindowBuilder primaryKey(final String field) {
         config.setPkField(field);
         return this;
     }

@@ -1,8 +1,7 @@
 package com.br.framework;
 
-import com.br.framework.Framework;
-import com.br.framework.internal.infra.InternalLogger;
-import com.br.framework.internal.infra.QueryResult;
+import com.br.framework.internal.logger.InternalLogger;
+import com.br.framework.internal.queryResult.QueryResult;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -10,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Stack;
 
-public final class FrameworkDatabase {
+public final class Database {
 
     private static class ConnectionPool {
 
@@ -67,7 +66,7 @@ public final class FrameworkDatabase {
     }
 
     private static void logQuery(final String query, final Object... arguments) {
-        InternalLogger.info(Framework.class, String.format("QUERY: %s", query));
+        InternalLogger.info(Database.class, String.format("QUERY: %s", query));
         if (arguments != null && arguments.length > 0) {
             final StringBuilder argsStr = new StringBuilder();
             argsStr.append("ARGUMENTS : [");
@@ -76,7 +75,7 @@ public final class FrameworkDatabase {
             }
             argsStr.setLength(argsStr.length() - 1);
             argsStr.append("]");
-            InternalLogger.info(Framework.class, argsStr.toString());
+            InternalLogger.info(Database.class, argsStr.toString());
         }
     }
 

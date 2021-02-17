@@ -2,8 +2,9 @@ package com.br.framework.internal.component;
 
 import com.br.framework.internal.component.event.BoolEventCommand;
 import com.br.framework.internal.component.factory.DmlQueryFactory;
-import com.br.framework.FrameworkDatabase;
-import com.br.framework.internal.infra.QueryResult;
+import com.br.framework.Database;
+import com.br.framework.internal.logger.InternalLogger;
+import com.br.framework.internal.queryResult.QueryResult;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -131,15 +132,20 @@ public class Handlebar implements Destroyable {
         }
     }
 
+    private Long getNextTableSequence() throws SQLException {
+        final QueryResult result = Database.query(String.format("select nextval(%s) seq from dual", window.getConfig().getSequence()));
+        result.toFirstRecord();
+        final Long nextSequence = result.getLong("seq");
+        return nextSequence;
+    }
+
     private void insert() {
         toForm();
         getSaveButton().setEnabled(true);
         getInsertButton().setEnabled(false);
         oldValues = new LinkedHashMap<>();
         try {
-            final QueryResult result = FrameworkDatabase.query(String.format("select nextval(%s) seq from dual", window.getConfig().getSequence()));
-            result.toFirstRecord();
-            final Long nextSequence = result.getLong("seq");
+            final Long nextSequence = getNextTableSequence();
             oldValues.put(window.getConfig().getPkField(), window.getTable().getValueGrid(window.getConfig().getPkField()));
             window.getConfig().getAttributes().keySet().stream().filter(field -> (!field.equals(window.getConfig().getPkField()))).forEachOrdered(field -> {
                 oldValues.put(field, window.getTable().getValueGrid(field));
@@ -148,48 +154,56 @@ public class Handlebar implements Destroyable {
             window.getTable().setValueGrid(window.getConfig().getPkField(), nextSequence);
             updateFormFields();
         } catch (SQLException ex) {
-            Logger.getLogger(Handlebar.class.getName()).log(Level.SEVERE, null, ex);
+            InternalLogger.err(Handlebar.class, ex.getMessage());
         }
     }
 
     private void delete() {
         if (window.getTable().getSelectedRows().size() > 0) {
-            final String query = DmlQueryFactory.getInstance().createDelete(window);
+            final String query = DmlQueryFactory.createDelete(window);
             final Object value = window.getTable().getValueGrid(window.getConfig().getPkField());
             try {
-                FrameworkDatabase.execute(query, value);
+                Database.execute(query, value);
                 window.getTable().refresh();
                 toGrid();
             } catch (SQLException ex) {
-                Logger.getLogger(Handlebar.class.getName()).log(Level.SEVERE, null, ex);
+                InternalLogger.err(Handlebar.class, ex.getMessage());
             }
         }
+    }
+
+    private boolean runBeforeInsertEvents() {
+        boolean doContinue = true;
+        for (final BoolEventCommand command : window.getConfig().getBeforeInsertEvents()) {
+            doContinue = doContinue && command.execute();
+        }
+        return doContinue;
+    }
+
+    private Object[] getInsertArguments() {
+        final Object[] arguments = new Object[window.getConfig().getAttributes().size() - 1];
+        int i = 0;
+        for (final String field : window.getConfig().getAttributes().keySet()) {
+            if (!field.equals(window.getConfig().getPkField())) {
+                arguments[i] = window.getTable().getValue(field);
+                i++;
+            }
+        }
+        return arguments;
     }
 
     private void save() {
         getSaveButton().setEnabled(false);
         getInsertButton().setEnabled(true);
-        String query;
         boolean doContinue = true;
         if (state == HandlebarState.INSERT) {
-            for (final BoolEventCommand command : window.getConfig().getBeforeInsertEvents()) {
-                doContinue = doContinue && command.execute();
-            }
-            query = DmlQueryFactory.getInstance().createInsert(window);
-        } else {
-            query = "";
+            doContinue = runBeforeInsertEvents();
         }
         if (doContinue) {
-            final Object[] arguments = new Object[window.getConfig().getAttributes().size() - 1];
-            int i = 0;
-            for (final String field : window.getConfig().getAttributes().keySet()) {
-                if (!field.equals(window.getConfig().getPkField())) {
-                    arguments[i] = window.getTable().getValue(field);
-                    i++;
-                }
-            }
+            String query = DmlQueryFactory.createInsert(window);
+            final Object[] insertArguments = getInsertArguments();
             try {
-                FrameworkDatabase.execute(query, arguments);
+                Database.execute(query, insertArguments);
                 window.getTable().refresh();
                 toGrid();
                 if (state == HandlebarState.INSERT) {

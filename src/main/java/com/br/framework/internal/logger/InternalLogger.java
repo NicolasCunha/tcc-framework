@@ -1,4 +1,4 @@
-package com.br.framework.internal.infra;
+package com.br.framework.internal.logger;
 
 import java.util.HashMap;
 import java.util.Map;

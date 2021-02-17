@@ -1,4 +1,4 @@
-package com.br.framework.internal.infra;
+package com.br.framework.internal.queryResult;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
