@@ -6,7 +6,7 @@ apply plugin: 'application'
 description = 'Framework'
 group = 'com.br.edu'
 
-mainClassName = 'com.br.framework.internal.test.RuntimeTest'
+mainClassName = 'com.br.framework.runtimeTest.RuntimeTest'
 
 repositories {
     mavenCentral()
