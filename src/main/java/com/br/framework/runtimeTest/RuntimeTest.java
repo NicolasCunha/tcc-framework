@@ -10,8 +10,8 @@ public class RuntimeTest {
         Database.setDatabaseCredentials("jdbc:mariadb://localhost:3306/tcc", "root", "root"); // Credenciais do banco
         final Window window = WindowBuilder.getInstance()
                 .title("Cadastro de Produtos") // Titulo da Janela
-                .width(1024) // Largura
-                .height(768) // Altura
+                .width(800) // Largura
+                .height(600) // Altura
                 .centered(true) // Centralizado
                 .table("produto") // Tabela
                 .includeAttribute("id_produto", "Código do Produto") // Atributo com label
