@@ -3,11 +3,13 @@ package com.br.framework.internal.component;
 import com.br.framework.internal.component.event.BoolEventCommand;
 import com.br.framework.internal.component.factory.DmlQueryFactory;
 import com.br.framework.Database;
+import com.br.framework.internal.component.event.VoidEventCommand;
 import com.br.framework.internal.logger.InternalLogger;
 import com.br.framework.internal.queryResult.QueryResult;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -159,7 +161,7 @@ public class Handlebar implements Destroyable {
     }
 
     private void delete() {
-        if (window.getTable().getSelectedRows().size() > 0) {
+        if (window.getTable().getSelectedRows().size() > 0 && runBeforeDeleteEvents()) {
             final String query = DmlQueryFactory.createDelete(window);
             final Object value = window.getTable().getValueGrid(window.getConfig().getPkField());
             try {
@@ -169,12 +171,31 @@ public class Handlebar implements Destroyable {
             } catch (SQLException ex) {
                 InternalLogger.err(Handlebar.class, ex.getMessage());
             }
+            window.getConfig().getAfterDeleteEvents().forEach(command -> {
+                command.execute();
+            });
         }
     }
 
     private boolean runBeforeInsertEvents() {
         boolean doContinue = true;
         for (final BoolEventCommand command : window.getConfig().getBeforeInsertEvents()) {
+            doContinue = doContinue && command.execute();
+        }
+        return doContinue;
+    }
+
+    private boolean runBeforeUpdateEvents() {
+        boolean doContinue = true;
+        for (final BoolEventCommand command : window.getConfig().getBeforeUpdateEvents()) {
+            doContinue = doContinue && command.execute();
+        }
+        return doContinue;
+    }
+
+    private boolean runBeforeDeleteEvents() {
+        boolean doContinue = true;
+        for (final BoolEventCommand command : window.getConfig().getBeforeDeleteEvents()) {
             doContinue = doContinue && command.execute();
         }
         return doContinue;
@@ -198,6 +219,8 @@ public class Handlebar implements Destroyable {
         boolean doContinue = true;
         if (state == HandlebarState.INSERT) {
             doContinue = runBeforeInsertEvents();
+        } else if (state == HandlebarState.UPDATE) {
+            doContinue = runBeforeUpdateEvents();
         }
         if (doContinue) {
             String query = DmlQueryFactory.createInsert(window);
@@ -213,6 +236,16 @@ public class Handlebar implements Destroyable {
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(Handlebar.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        if (state == HandlebarState.INSERT) {
+            window.getConfig().getAfterInsertEvents().forEach(command -> {
+                command.execute();
+            });
+        } else if (state == HandlebarState.UPDATE) {
+            for (Iterator<VoidEventCommand> it = window.getConfig().getAfterUpdateEvents().iterator(); it.hasNext();) {
+                VoidEventCommand command = it.next();
+                command.execute();
             }
         }
     }

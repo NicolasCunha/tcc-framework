@@ -19,6 +19,10 @@ public final class WindowConfiguration {
     private String pkField;
     private List<BoolEventCommand> beforeInsertEvents;
     private List<VoidEventCommand> afterInsertEvents;
+    private List<BoolEventCommand> beforeUpdateEvents;
+    private List<VoidEventCommand> afterUpdateEvents;
+    private List<BoolEventCommand> beforeDeleteEvents;
+    private List<VoidEventCommand> afterDeleteEvents;
 
     private WindowConfiguration() {
         attributes = new LinkedHashMap<>();
@@ -116,6 +120,38 @@ public final class WindowConfiguration {
 
     public void setAfterInsertEvents(List<VoidEventCommand> afterInsertEvents) {
         this.afterInsertEvents = afterInsertEvents;
+    }
+
+    public List<BoolEventCommand> getBeforeUpdateEvents() {
+        return beforeUpdateEvents;
+    }
+
+    public void setBeforeUpdateEvents(List<BoolEventCommand> beforeUpdateEvents) {
+        this.beforeUpdateEvents = beforeUpdateEvents;
+    }
+
+    public List<VoidEventCommand> getAfterUpdateEvents() {
+        return afterUpdateEvents;
+    }
+
+    public void setAfterUpdateEvents(List<VoidEventCommand> afterUpdateEvents) {
+        this.afterUpdateEvents = afterUpdateEvents;
+    }
+
+    public List<BoolEventCommand> getBeforeDeleteEvents() {
+        return beforeDeleteEvents;
+    }
+
+    public void setBeforeDeleteEvents(List<BoolEventCommand> beforeDeleteEvents) {
+        this.beforeDeleteEvents = beforeDeleteEvents;
+    }
+
+    public List<VoidEventCommand> getAfterDeleteEvents() {
+        return afterDeleteEvents;
+    }
+
+    public void setAfterDeleteEvents(List<VoidEventCommand> afterDeleteEvents) {
+        this.afterDeleteEvents = afterDeleteEvents;
     }
 
 }
